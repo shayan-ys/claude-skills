@@ -1,0 +1,10 @@
+{
+  "name": "product-research",
+  "version": "0.1.0",
+  "description": "Buying-decision research methodology with deep prioritization on health and long-term safety for products that contact the body, food, skin, lungs, or sleep. Spawns parallel research teammates and synthesizes neutral surveys into an opinionated recommendation.",
+  "author": {
+    "name": "Shayan Yousefi",
+    "url": "https://github.com/shayan-ys"
+  },
+  "license": "MIT"
+}

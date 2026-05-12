@@ -12,6 +12,11 @@
       "name": "google-docs-tabs",
       "source": "./plugins/google-docs-tabs",
       "description": "Read/write Google Docs with tabs, sidestepping the Docs MCP field-mask bug."
+    },
+    {
+      "name": "product-research",
+      "source": "./plugins/product-research",
+      "description": "Buying-decision research methodology with parallel teammates and health-priority bias."
     }
   ]
 }
