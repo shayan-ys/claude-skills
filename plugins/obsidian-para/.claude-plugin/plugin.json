@@ -1,0 +1,10 @@
+{
+  "name": "obsidian-para",
+  "version": "0.1.0",
+  "description": "Four skills for maintaining an Obsidian vault organized by PARA: wiki-lint, wiki-process, standup-notes, travel-research. See config.example.md for the placeholders you need to fill in.",
+  "author": {
+    "name": "Shayan Yousefi",
+    "url": "https://github.com/shayan-ys"
+  },
+  "license": "MIT"
+}

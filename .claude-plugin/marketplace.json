@@ -17,6 +17,11 @@
       "name": "product-research",
       "source": "./plugins/product-research",
       "description": "Buying-decision research methodology with parallel teammates and health-priority bias."
+    },
+    {
+      "name": "obsidian-para",
+      "source": "./plugins/obsidian-para",
+      "description": "Four skills for maintaining an Obsidian vault organized by PARA: lint, inbox-process, standup-notes, travel-research."
     }
   ]
 }
