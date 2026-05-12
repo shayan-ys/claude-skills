@@ -1,0 +1,17 @@
+{
+  "name": "google-docs-tabs",
+  "version": "0.1.0",
+  "description": "Read and write Google Docs with the tabs/subtabs feature via a tiny Python helper. Sidesteps the field-mask bug that breaks every tab-scoped call in @a-bonus/google-docs-mcp.",
+  "author": {
+    "name": "Shayan Yousefi",
+    "url": "https://github.com/shayan-ys"
+  },
+  "license": "MIT",
+  "userConfig": {
+    "googleDocsServiceAccountPath": {
+      "type": "string",
+      "description": "Absolute path to your Google service-account JSON file (with Docs API access).",
+      "required": true
+    }
+  }
+}

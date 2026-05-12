@@ -7,5 +7,11 @@
   "metadata": {
     "description": "Personal Claude Code plugins by Shayan Yousefi — Obsidian/PARA tooling, Google Docs helpers, research methodology."
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "google-docs-tabs",
+      "source": "./plugins/google-docs-tabs",
+      "description": "Read/write Google Docs with tabs, sidestepping the Docs MCP field-mask bug."
+    }
+  ]
 }
