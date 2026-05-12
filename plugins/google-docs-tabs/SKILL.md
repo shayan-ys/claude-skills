@@ -21,7 +21,13 @@ This affects `listTabs`, `addTab`, `appendMarkdown`, `replaceDocumentWithMarkdow
 
 ## How to do it: use the helper script
 
-`${CLAUDE_PLUGIN_ROOT}/scripts/gdocs.py` is a 90-line CLI that wraps the Docs API and uses your Google service account JSON file (path supplied via the plugin's userConfig prompt as `${GOOGLE_DOCS_SA_PATH}`).
+`${CLAUDE_PLUGIN_ROOT}/scripts/gdocs.py` is a 90-line CLI that wraps the Docs API. It reads the service-account JSON path from the `SA_PATH` env var; set it from the plugin's userConfig value before each invocation:
+
+```bash
+export SA_PATH="${GOOGLE_DOCS_SA_PATH:-$googleDocsServiceAccountPath}"
+```
+
+(Use whichever name the plugin runtime exposes the userConfig value as.)
 
 ### Choosing the right write tool
 
@@ -111,7 +117,10 @@ gdocs.py append $DOC $NEW "$(cat draft.md)"
 
 ## What lives where
 - Helper CLI: `${CLAUDE_PLUGIN_ROOT}/scripts/gdocs.py`
-- Service account: `${GOOGLE_DOCS_SA_PATH}` (supplied via plugin userConfig prompt on install)
-- venv with `google-auth` + `google-api-python-client`: `/tmp/gd-venv/`
-  (the script's shebang points at this venv; if it gets cleaned, recreate with
-  `uv venv /tmp/gd-venv && uv pip install --python /tmp/gd-venv/bin/python google-auth google-api-python-client`)
+- Service account: `${GOOGLE_DOCS_SA_PATH}` (supplied via plugin userConfig prompt on install; exported as `SA_PATH` to the scripts)
+- Python dependencies: `google-auth` and `google-api-python-client`. The shebang is `#!/usr/bin/env python3`, so the system `python3` (or whichever venv is on `PATH`) must have those packages. One-liner if you want an isolated venv:
+
+  ```bash
+  uv venv /tmp/gd-venv && uv pip install --python /tmp/gd-venv/bin/python google-auth google-api-python-client
+  # then either activate the venv or change the script's shebang to point at /tmp/gd-venv/bin/python
+  ```

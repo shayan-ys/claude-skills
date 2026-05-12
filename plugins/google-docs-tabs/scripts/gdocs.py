@@ -1,7 +1,7 @@
-#!/usr/bin/env -S /tmp/gd-venv/bin/python
-"""Tiny CLI for Google Docs tab operations using the service account at
-/Users/shayanys/.config/google-docs-mcp/sa.json. Bypasses the buggy
-@a-bonus/google-docs-mcp field-mask handling by calling the Docs API directly.
+#!/usr/bin/env python3
+"""Tiny CLI for Google Docs tab operations using a service-account JSON file.
+Bypasses the buggy @a-bonus/google-docs-mcp field-mask handling by calling the
+Docs API directly.
 
 Usage:
   gdocs.py tabs <docId>                                # list tab tree (title + tabId)
@@ -13,11 +13,14 @@ Usage:
 
 docId is the long string between /d/ and /edit in a Google Docs URL.
 
-Env: SA_PATH overrides the service-account path.
+Env: SA_PATH — required — absolute path to your Google service-account JSON.
+     The Claude Code plugin sets this from the userConfig prompt on install.
 """
 import json, os, sys
 
-SA = os.environ.get('SA_PATH', '/Users/shayanys/.config/google-docs-mcp/sa.json')
+SA = os.environ.get('SA_PATH')
+if not SA:
+    sys.exit("error: SA_PATH env var is required (path to Google service-account JSON)")
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build

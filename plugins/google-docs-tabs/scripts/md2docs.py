@@ -1,4 +1,4 @@
-#!/usr/bin/env -S /tmp/gd-venv/bin/python
+#!/usr/bin/env python3
 """Render a markdown file into a Google Docs tab with real formatting.
 
 Usage:
@@ -12,7 +12,9 @@ import json, os, re, sys
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
-SA = os.environ.get('SA_PATH', '/Users/shayanys/.config/google-docs-mcp/sa.json')
+SA = os.environ.get('SA_PATH')
+if not SA:
+    sys.exit("error: SA_PATH env var is required (path to Google service-account JSON)")
 
 def docs_client():
     creds = service_account.Credentials.from_service_account_file(
