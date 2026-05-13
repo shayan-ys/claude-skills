@@ -10,6 +10,7 @@
   "userConfig": {
     "googleDocsServiceAccountPath": {
       "type": "string",
+      "title": "Google service-account JSON path",
       "description": "Absolute path to your Google service-account JSON file (with Docs API access).",
       "required": true
     }
