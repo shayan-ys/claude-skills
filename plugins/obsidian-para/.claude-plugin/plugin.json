@@ -10,66 +10,78 @@
   "userConfig": {
     "wikiRoot": {
       "type": "string",
+      "title": "Wiki root path",
       "description": "Relative or absolute path to your Obsidian vault root (e.g. 'Wiki' or '~/Documents/MyVault').",
       "required": true
     },
     "workDiaryBase": {
       "type": "string",
+      "title": "Work diary base",
       "description": "Path under WIKI_ROOT where daily work-diary entries live (e.g. '01-Areas/Career/Work-Diary').",
       "required": true
     },
     "standupNotesBase": {
       "type": "string",
+      "title": "Standup notes base",
       "description": "Path under WIKI_ROOT for synthesized standup notes (e.g. '01-Areas/Career/Standup-Notes').",
       "required": true
     },
     "companyName": {
       "type": "string",
+      "title": "Company name",
       "description": "Your employer's name, used in skill prose and tags (e.g. 'Acme Corp').",
       "required": true
     },
     "companyContextNote": {
       "type": "string",
+      "title": "Company context note",
       "description": "Vault-relative path to a note describing your company's standup cadence and org context (e.g. '${WIKI_ROOT}/01-Areas/Career/Acme.md'). Optional — skill will ask for cadence explicitly if absent.",
       "required": false
     },
     "obsidianVaultName": {
       "type": "string",
+      "title": "Obsidian vault name",
       "description": "Your Obsidian vault's display name as Obsidian sees it (used for `obsidian://` URIs and `obsidian` CLI commands). Find it in Obsidian settings → About → Vault name.",
       "required": true
     },
     "inboxBase": {
       "type": "string",
+      "title": "Inbox folder",
       "description": "Folder name for unprocessed captures at the vault root. Vanilla PARA users can use 'Inbox'.",
       "required": false,
       "default": "00-Inbox"
     },
     "areasBase": {
       "type": "string",
+      "title": "Areas folder",
       "description": "Folder name for ongoing life areas at the vault root. Vanilla PARA users can use 'Areas'.",
       "required": false,
       "default": "01-Areas"
     },
     "projectsBase": {
       "type": "string",
+      "title": "Projects folder",
       "description": "Folder name for defined-outcome projects at the vault root. Vanilla PARA users can use 'Projects'.",
       "required": false,
       "default": "02-Projects"
     },
     "resourcesBase": {
       "type": "string",
+      "title": "Resources folder",
       "description": "Folder name for reference material at the vault root. Vanilla PARA users can use 'Resources'.",
       "required": false,
       "default": "03-Resources"
     },
     "journalBase": {
       "type": "string",
+      "title": "Journal folder",
       "description": "Folder name for journal entries at the vault root. Vanilla PARA users can use 'Archive' or omit this folder entirely.",
       "required": false,
       "default": "05-Journal"
     },
     "mocBase": {
       "type": "string",
+      "title": "MOC folder",
       "description": "Folder name for Maps of Content at the vault root. Vanilla PARA users can use 'Maps' or omit this folder entirely.",
       "required": false,
       "default": "06-Maps-of-Content"
