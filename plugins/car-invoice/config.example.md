@@ -50,9 +50,12 @@ chamber exec car-invoice -- claude
 When `PAPERLESS_TOKEN` is already set in the environment, the plugin uses it
 directly and ignores the userConfig value.
 
-## vehicles.json format
+## vehicles.json schema
 
-Copy `vehicles.example.json` to your config location and fill in your vehicles:
+`vehicles.json` is the single source of truth for your fleet. Copy `vehicles.example.json`,
+fill in your vehicles, and save it somewhere permanent (e.g. `~/.config/car-invoice/vehicles.json`).
+
+### Full annotated example
 
 ```json
 {
@@ -62,27 +65,46 @@ Copy `vehicles.example.json` to your config location and fill in your vehicles:
       "name": "2020 Toyota Camry SE",
       "vin": "4T1B11HK0LU000001",
       "paperless_storage_path": "car/sedan/{created_year}/",
-      "paperless_tag": "sedan"
+      "paperless_tag": "sedan",
+      "paperless_storage_path_id": null,
+      "paperless_tag_id": null
     }
   ]
 }
 ```
 
-| Field | Required | Description |
-|---|---|---|
-| `key` | ✓ | Machine identifier used in `vehicle_match` field of extracted JSON. Lowercase, hyphen-joined. |
-| `name` | ✓ | Human-readable name (year, make, model, trim). |
-| `vin` | — | Full 17-character VIN. Used by the linter to cross-check extracted VINs. |
-| `paperless_storage_path` | — | Storage path template for Paperless. Created by `setup_paperless.py`. |
-| `paperless_tag` | — | Tag created in Paperless for this vehicle. Defaults to the key if omitted. |
+### Field reference
 
-After filling in `vehicles.json`, run `setup_paperless.py` once to create the
-corresponding storage paths, tags, and custom fields in your Paperless instance:
+| Field | Required | Set by | Description |
+|---|---|---|---|
+| `key` | ✓ | you | Machine identifier. Used as `vehicle_match` in extracted JSON and as the vehicle identifier throughout the pipeline. Lowercase, hyphen-joined (e.g. `sedan`, `family-suv`). |
+| `name` | ✓ | you | Human-readable label shown in lint errors and summaries. Include year, make, model, trim (e.g. `2020 Toyota Camry SE`). |
+| `vin` | — | you | Full 17-character VIN. The linter cross-checks extracted VINs against this value. Leave blank if unknown. |
+| `paperless_storage_path` | — | you | Paperless storage path template. `{created_year}` is expanded by Paperless. Defaults to `car/<key>/{created_year}/` if omitted. |
+| `paperless_tag` | — | you | Tag name created in Paperless for this vehicle. Defaults to `key` if omitted. |
+| `paperless_storage_path_id` | — | `setup_paperless.py` | Numeric ID of the Paperless storage path object. Leave `null` before first run; `setup_paperless.py` fills it in automatically. Used by Phase 2 (push.py). |
+| `paperless_tag_id` | — | `setup_paperless.py` | Numeric ID of the Paperless tag object for this vehicle. Leave `null` before first run; `setup_paperless.py` fills it in automatically. Used by Phase 2 (push.py). |
 
-```bash
-source "${CLAUDE_PLUGIN_ROOT}/scripts/init-env.sh"
-cd "${CLAUDE_PLUGIN_ROOT}/scripts" && uv run setup_paperless.py
-```
+### First-time setup workflow
+
+1. Copy `vehicles.example.json`, fill in `key`, `name`, `vin`, and the two `paperless_*` name fields.  
+   Leave `paperless_storage_path_id` and `paperless_tag_id` as `null`.
+
+2. Run `setup_paperless.py` (idempotent — safe to re-run):
+   ```bash
+   source "${CLAUDE_PLUGIN_ROOT}/scripts/init-env.sh"
+   cd "${CLAUDE_PLUGIN_ROOT}/scripts" && uv run setup_paperless.py
+   ```
+   It creates (or finds) the storage paths, tags, and custom fields in Paperless, then
+   **writes the assigned numeric IDs back into your `vehicles.json`**.
+
+3. Your `vehicles.json` now contains the filled-in IDs:
+   ```json
+   { "vehicles": [{ ..., "paperless_storage_path_id": 5, "paperless_tag_id": 12 }] }
+   ```
+
+4. These IDs are used by Phase 2 (`push.py`) when it PATCHes documents with the correct
+   storage path and tags. Phase 1 (extraction + staging) works without them.
 
 ## Pipeline state directory
 
