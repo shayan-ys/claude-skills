@@ -1,0 +1,10 @@
+{
+  "name": "travel-research",
+  "version": "0.1.0",
+  "description": "Interactive travel-planning companion — triages booked vs research-needed, uses Google Maps MCP and parallel sonnet/haiku teammates to build curated Ideas.md + per-category Findings notes. Outputs land in an Obsidian/PARA vault; see config.example.md for the placeholders to fill in.",
+  "author": {
+    "name": "Shayan Ys",
+    "url": "https://github.com/shayan-ys"
+  },
+  "license": "MIT"
+}

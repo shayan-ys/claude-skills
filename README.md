@@ -15,8 +15,9 @@ Then install any plugin:
 | Plugin | What it does | Setup needed |
 |---|---|---|
 | [`google-docs-tabs`](./plugins/google-docs-tabs/) | Read/write Google Docs with tabs, sidestepping the Docs MCP field-mask bug | Service-account JSON path (prompted on install) |
-| [`obsidian-para`](./plugins/obsidian-para/) | Four skills for maintaining an Obsidian vault organized by PARA | Fork and substitute placeholders — see [config.example.md](./plugins/obsidian-para/config.example.md) |
+| [`obsidian-para`](./plugins/obsidian-para/) | Three skills for maintaining an Obsidian vault organized by PARA | Fork and substitute placeholders — see [config.example.md](./plugins/obsidian-para/config.example.md) |
 | [`product-research`](./plugins/product-research/) | Buying-decision research methodology with parallel teammates and health-priority bias | None |
+| [`travel-research`](./plugins/travel-research/) | Interactive travel-planning companion — triages booked vs. TBD, uses Google Maps MCP and parallel teammates to build curated Ideas.md + Findings notes | None |
 
 ## Why this exists
 

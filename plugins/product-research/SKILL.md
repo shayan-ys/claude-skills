@@ -38,7 +38,7 @@ Before spawning anything, get clear on:
 - **Geographic context?** Country/region affects pricing, availability, and regulatory environment.
 - **Existing constraints?** Dietary, allergies, induction stovetop, small apartment, etc.
 
-If 2+ of these are missing and the answer changes meaningfully based on them, ask once with [[AskUserQuestion]]-style chips. Otherwise proceed with reasonable assumptions and flag them in the output.
+If 2+ of these are missing and the answer changes meaningfully based on them, ask once with `AskUserQuestion`-style chips. Otherwise proceed with reasonable assumptions and flag them in the output.
 
 ### 2. Spawn parallel sonnet teammates
 
@@ -137,7 +137,7 @@ After teammates return, the lead writes the opinionated recommendation. The synt
 Match the format to the user's surface:
 
 - **Conversational reply** when the user just asked a question. Concise, scannable, hyperlinked. The carbon-steel-pan synthesis (in their wiki) is a good model.
-- **Wiki note** when the user has an Obsidian vault and the topic deserves persistence. Follow the [[Vault Schema — CLAUDE.md]] research/synthesis split: neutral surveys go in `03-Resources/Research/<topic>/` as separate notes; opinionated synthesis goes in a sibling top-level note that links to them.
+- **Wiki note** when the user has an Obsidian vault and the topic deserves persistence. Follow your vault's conventions doc (e.g. `${WIKI_ROOT}/CLAUDE.md`) research/synthesis split: neutral surveys go in `03-Resources/Research/<topic>/` as separate notes; opinionated synthesis goes in a sibling top-level note that links to them.
 - **Both** when the user explicitly asks to save research alongside getting an answer.
 
 ## Example shapes

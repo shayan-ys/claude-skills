@@ -1,7 +1,7 @@
 ---
 name: wiki-lint
 description: "Vault-wide health check and cleanup for the Obsidian Wiki. Finds broken frontmatter, orphan notes, missing lead paragraphs, stale archives, duplicate notes, weak backlinks, and outdated indexes — then fixes them with your approval. Use this skill whenever the user says lint, health check, clean up, tidy, audit, or maintain the vault/wiki, or when they ask about orphan notes, broken links, stale content, or vault quality. Also trigger when the user says things like 'is anything messy in the wiki' or 'what needs attention in the vault'."
-argument-hint: "[area to focus on, e.g. 'Home-Lab' or 'full vault']"
+argument-hint: "[area to focus on, e.g. 'Career' or 'full vault']"
 ---
 
 # Wiki Lint — Vault Health Check & Cleanup
@@ -23,7 +23,7 @@ This skill follows the vault's "Don't Ask / Do Ask" principle. Mechanical fixes 
 1. Read `${WIKI_ROOT}/CLAUDE.md` — this is the authoritative schema. Every check below validates against it.
 2. Read the target folder's `_index.md` to get the current inventory.
 3. If linting the full vault, read all top-level `_index.md` files:
-   - `00-Inbox/_index.md`, `01-Areas/_index.md`, `02-Projects/_index.md`, `03-Resources/_index.md`, `05-Journal/_index.md`, `06-Maps-of-Content/_index.md`
+   - `${INBOX_BASE}/_index.md`, `${AREAS_BASE}/_index.md`, `${PROJECTS_BASE}/_index.md`, `${RESOURCES_BASE}/_index.md`, `${JOURNAL_BASE}/_index.md`, `${MOC_BASE}/_index.md`
 
 ---
 
@@ -34,10 +34,10 @@ For a full-vault lint, if you have a multi-pane terminal multiplexer like [cmux]
 ```
 Team: "vault-lint"
 Teammates:
-  - "lint-areas"    → 01-Areas/
-  - "lint-projects" → 02-Projects/
-  - "lint-resources"→ 03-Resources/
-  - "lint-journal"  → 05-Journal/ and 06-Maps-of-Content/
+  - "lint-areas"    → ${AREAS_BASE}/
+  - "lint-projects" → ${PROJECTS_BASE}/
+  - "lint-resources"→ ${RESOURCES_BASE}/
+  - "lint-journal"  → ${JOURNAL_BASE}/ and ${MOC_BASE}/
 ```
 
 For a scoped lint (single folder), skip teammates and run checks directly.
@@ -68,7 +68,7 @@ For each note, verify against the schema in `${WIKI_ROOT}/CLAUDE.md`:
 - [ ] `aliases` field exists (even if empty `[]`)
 - [ ] `created` and `updated` are valid dates
 
-Flag web clippings in `00-Inbox/Clippings/` separately — they arrive with non-standard frontmatter and need full rewriting during processing, not just patching.
+Flag web clippings in `${INBOX_BASE}/Clippings/` separately — they arrive with non-standard frontmatter and need full rewriting during processing, not just patching.
 
 ### 2b. Lead Paragraph Check
 
@@ -117,15 +117,15 @@ For each folder with an `_index.md`, verify:
 
 ### 2j. Unprocessed Inbox
 
-Count items in `00-Inbox/` (including `Clippings/`). These haven't been filed yet.
+Count items in `${INBOX_BASE}/` (including `Clippings/`). These haven't been filed yet.
 
 ### 2k. MOC Opportunities
 
-If any tag (check via `obsidian` CLI / Obsidian MCP with **your vault name** — often the basename of `${WIKI_ROOT}` — e.g. `obsidian vault="<name>" tags counts`) or topic cluster has 5+ notes but no MOC in `06-Maps-of-Content/`, flag it as a MOC candidate.
+If any tag (check via `obsidian` CLI / Obsidian MCP with **your vault name** — often the basename of `${WIKI_ROOT}` — e.g. `obsidian vault="${OBSIDIAN_VAULT_NAME}" tags counts`) or topic cluster has 5+ notes but no MOC in `${MOC_BASE}/`, flag it as a MOC candidate.
 
 ### 2l. Tag Hygiene
 
-Run `obsidian vault="<your-vault-name>" tags counts` (vault name matches your Obsidian vault, often the basename of `${WIKI_ROOT}`) and look for:
+Run `obsidian vault="${OBSIDIAN_VAULT_NAME}" tags counts` (vault name matches your Obsidian vault, often the basename of `${WIKI_ROOT}`) and look for:
 - Tags used only once (possible typos or one-offs)
 - Tags outside the established namespaces in `${WIKI_ROOT}/CLAUDE.md`
 - Near-duplicate tags (e.g., `tech/hw` vs `tech/hardware`)

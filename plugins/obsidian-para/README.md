@@ -1,13 +1,12 @@
 # obsidian-para
 
-A Claude Code plugin bundling four skills for maintaining an [Obsidian](https://obsidian.md) vault organized by [PARA](https://fortelabs.com/blog/para/):
+A Claude Code plugin bundling three skills for maintaining an [Obsidian](https://obsidian.md) vault organized by [PARA](https://fortelabs.com/blog/para/):
 
 - **wiki-lint** — vault-wide health check (broken frontmatter, orphan notes, stale archives, missing lead paragraphs, weak backlinks)
 - **wiki-process** — triage and file `00-Inbox/` captures into PARA folders with proper frontmatter, wikilinks, and index updates
 - **standup-notes** — synthesize daily work-diary entries into a structured standup prep note
-- **travel-research** — interactive trip-planning companion that triages booked-vs-research and builds curated Ideas + Findings notes per category
 
-Travel examples embedded in travel-research (specific cities/routes) are **illustrative author vignettes**, not telemetry about your vault.
+Looking for trip planning? See [`travel-research@shayan-ys`](../travel-research) — it's its own plugin now.
 
 ## Install
 

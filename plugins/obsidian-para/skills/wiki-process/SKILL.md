@@ -1,12 +1,12 @@
 ---
 name: wiki-process
-description: "Process unprocessed items from the Obsidian Wiki inbox (00-Inbox/). Reads raw captures and web clippings, classifies them, adds proper frontmatter, moves them to the right PARA folder, wires up wikilinks, and updates indexes. Use this skill when the user says process inbox, file inbox, triage inbox, sort inbox, clean inbox, or any variation of 'deal with stuff in the inbox'. Also trigger when the user mentions new clippings, unprocessed notes, or asks 'what's in the inbox'."
+description: "Process unprocessed items from the Obsidian Wiki inbox (${INBOX_BASE}/). Reads raw captures and web clippings, classifies them, adds proper frontmatter, moves them to the right PARA folder, wires up wikilinks, and updates indexes. Use this skill when the user says process inbox, file inbox, triage inbox, sort inbox, clean inbox, or any variation of 'deal with stuff in the inbox'. Also trigger when the user mentions new clippings, unprocessed notes, or asks 'what's in the inbox'."
 argument-hint: "[all | latest | specific-filename.md]"
 ---
 
 # Wiki Process — Inbox Triage & Filing
 
-Process unprocessed notes from `00-Inbox/` into their proper places in the vault.
+Process unprocessed notes from `${INBOX_BASE}/` into their proper places in the vault.
 
 ---
 
@@ -14,14 +14,14 @@ Process unprocessed notes from `00-Inbox/` into their proper places in the vault
 
 Check what `$ARGUMENTS` says:
 
-- **`latest`** or empty → process only the most recently modified file in `00-Inbox/` (including `Clippings/`)
-- **`all`** → process every item in `00-Inbox/` (including `Clippings/` subfolder)
+- **`latest`** or empty → process only the most recently modified file in `${INBOX_BASE}/` (including `Clippings/`)
+- **`all`** → process every item in `${INBOX_BASE}/` (including `Clippings/` subfolder)
 - **A specific filename** → process just that file
 
 If `$ARGUMENTS` is empty or ambiguous:
 
-1. List `00-Inbox/` and `00-Inbox/Clippings/` (excluding `Prompts/` and `Archive/`) and identify the most recently modified file. Read its `title` from frontmatter if present, otherwise fall back to the filename (without `.md`).
-2. Also count the total number of inbox items (across `00-Inbox/` and `Clippings/`, excluding `Prompts/` and `Archive/`).
+1. List `${INBOX_BASE}/` and `${INBOX_BASE}/Clippings/` (excluding `Prompts/` and `Archive/`) and identify the most recently modified file. Read its `title` from frontmatter if present, otherwise fall back to the filename (without `.md`).
+2. Also count the total number of inbox items (across `${INBOX_BASE}/` and `Clippings/`, excluding `Prompts/` and `Archive/`).
 3. Ask the user via `AskUserQuestion`, embedding the latest title and total count so the user knows exactly what's queued. For example:
 
 > "Latest inbox item: **\<Title of latest note\>**. There are N items total. Process just the latest, or all of them? (If all, I'll spin up teammates to work in parallel.)"
@@ -34,17 +34,17 @@ If the inbox is empty, say so and stop — don't ask the question.
 
 1. Read `${WIKI_ROOT}/CLAUDE.md` — the authoritative vault schema. All frontmatter, structure, and formatting decisions come from here.
 2. Read all top-level `_index.md` files to understand what already exists in each area:
-   - `01-Areas/_index.md`, `02-Projects/_index.md`, `03-Resources/_index.md`, `06-Maps-of-Content/_index.md`
-3. Run `obsidian vault="Wiki" tags counts` to get the current tag inventory.
-4. List all files in `00-Inbox/`, `00-Inbox/Clippings/`, and `00-Inbox/Prompts/` (excluding `Archive/`) to identify items to process.
+   - `${AREAS_BASE}/_index.md`, `${PROJECTS_BASE}/_index.md`, `${RESOURCES_BASE}/_index.md`, `${MOC_BASE}/_index.md`
+3. Run `obsidian vault="${OBSIDIAN_VAULT_NAME}" tags counts` to get the current tag inventory.
+4. List all files in `${INBOX_BASE}/`, `${INBOX_BASE}/Clippings/`, and `${INBOX_BASE}/Prompts/` (excluding `Archive/`) to identify items to process.
 
 ---
 
 ## Step 1.5 — Check Open Prompts (Mandatory)
 
-`00-Inbox/Prompts/` is a queue of standing requests for Claude (see `${WIKI_ROOT}/CLAUDE.md` → "Prompts Folder"). **Before filing any inbox items, scan this folder.**
+`${INBOX_BASE}/Prompts/` is a queue of standing requests for Claude (see `${WIKI_ROOT}/CLAUDE.md` → "Prompts Folder"). **Before filing any inbox items, scan this folder.**
 
-1. List `00-Inbox/Prompts/*.md` (ignore the `Archive/` subfolder).
+1. List `${INBOX_BASE}/Prompts/*.md` (ignore the `Archive/` subfolder).
 2. **If there are zero open prompts, skip this step silently.** Do not ask the user about it.
 3. If there are one or more, read each prompt file (they're short, free-form prose) and build a one-line summary per prompt.
 4. Use `AskUserQuestion` to ask **one** question with exactly two options:
@@ -70,7 +70,7 @@ If the inbox is empty, say so and stop — don't ask the question.
 7. Address each chosen prompt:
    - Follow the prompt's intent. If it says "research X" → use the `research` flow. "Brainstorm Y" → use `idea` flow. Creates output notes in the right PARA folder per the normal conventions in `${WIKI_ROOT}/CLAUDE.md`.
    - If you have a multi-pane terminal multiplexer like [cmux](https://github.com/get-cmux/cmux), use cmux teammates for parallel prompts (per project `CLAUDE.md` — `TeamCreate` + `Agent` with `team_name`, never `run_in_background`); otherwise run serially. Prefer sonnet teammates for grunt work.
-8. Once each prompt is addressed, **delete the prompt file** from `00-Inbox/Prompts/`. No archive — Obsidian Sync preserves version history. Make sure the output note(s) produced from the prompt are properly filed in PARA and linked before deletion.
+8. Once each prompt is addressed, **delete the prompt file** from `${INBOX_BASE}/Prompts/`. No archive — Obsidian Sync preserves version history. Make sure the output note(s) produced from the prompt are properly filed in PARA and linked before deletion.
 9. After all chosen prompts are addressed, use `AskUserQuestion` again:
 
    ```
@@ -89,9 +89,11 @@ If the inbox is empty, say so and stop — don't ask the question.
 
 ## Step 1.6 — Work-Diary (Mandatory, runs before generic inbox)
 
-`00-Inbox/Work-Diary/` is a separate stream: voice-memo transcripts dropped by an iOS Shortcut (or similar capture mechanism) into this folder. They have a totally different shape from generic inbox captures (timestamped `## HH:MM` blocks, minimal frontmatter, one file per day) and a fixed destination (`${WIKI_ROOT}/${WORK_DIARY_BASE}/`), so they get their own pass before the generic Step 2 sweep. Keep a consistent contract for filenames and timestamps in your vault's conventions doc (`${WIKI_ROOT}/CLAUDE.md`) if you use this pipeline.
+**Opt-in**: This step is only relevant if you have a capture pipeline that drops timestamped voice-memo transcripts into `${INBOX_BASE}/Work-Diary/`. If you don't use this pattern, skip Step 1.6 entirely and proceed to Step 2.
 
-1. List `00-Inbox/Work-Diary/*.md` (oldest first by mtime). If empty, skip this step silently.
+`${INBOX_BASE}/Work-Diary/` is a separate stream: voice-memo transcripts dropped by an iOS Shortcut (or similar capture mechanism) into this folder. They have a totally different shape from generic inbox captures (timestamped `## HH:MM` blocks, minimal frontmatter, one file per day) and a fixed destination (`${WIKI_ROOT}/${WORK_DIARY_BASE}/`), so they get their own pass before the generic Step 2 sweep. Keep a consistent contract for filenames and timestamps in your vault's conventions doc (`${WIKI_ROOT}/CLAUDE.md`) if you use this pipeline.
+
+1. List `${INBOX_BASE}/Work-Diary/*.md` (oldest first by mtime). If empty, skip this step silently.
 2. If one or more entries exist, use `AskUserQuestion`:
    ```
    Question: "N work-diary entr(y/ies) waiting: <filename1>, <filename2>, ... Process now?"
@@ -114,7 +116,7 @@ If the inbox is empty, say so and stop — don't ask the question.
    - **Garbled but substantive content — FLAG.** If there's actual content the user clearly tried to convey but a name, number, or referent is unintelligible (e.g. "I synced with [unintelligible name] about the migration"), leave the surrounding sentence intact and mark just the unclear span with `<!-- unclear: ... -->`. Reserve this marker for cases worth coming back to.
    - **When in doubt:** ask "would a human re-reading this in 6 months get any value from the marked text?" If no, delete. If yes, flag.
 
-   **c. Detect project/area mentions.** Scan the cleaned transcript for mentions of existing notes — search by both note title and `aliases:` field across `01-Areas/`, `02-Projects/`, `03-Resources/`. Convert the first occurrence per note to an inline `[[wikilink]]`. Don't link every occurrence — that creates visual noise on mobile. If a mention is ambiguous (e.g. "the migration" could be one of several projects), leave it as plain text.
+   **c. Detect project/area mentions.** Scan the cleaned transcript for mentions of existing notes — search by both note title and `aliases:` field across `${AREAS_BASE}/`, `${PROJECTS_BASE}/`, `${RESOURCES_BASE}/`. Convert the first occurrence per note to an inline `[[wikilink]]`. Don't link every occurrence — that creates visual noise on mobile. If a mention is ambiguous (e.g. "the migration" could be one of several projects), leave it as plain text.
 
    **d. Build full frontmatter** for the processed file:
    ```yaml
@@ -191,12 +193,12 @@ Determine the best `type` for this note:
 - `tool` — a software tool or service
 - `person` — about a person
 - `project` — an active project
-- `journal` — dated diary/log entry (work diary, daily reflections); files under `${WIKI_ROOT}/${WORK_DIARY_BASE}/` or `05-Journal/`
+- `journal` — dated diary/log entry (work diary, daily reflections); files under `${WIKI_ROOT}/${WORK_DIARY_BASE}/` or `${JOURNAL_BASE}/`
 
 Determine the destination folder:
-- Personal development, ongoing life areas → `01-Areas/[subfolder]/`
-- Active projects with defined outcomes → `02-Projects/[subfolder]/`
-- Reference material, articles, guides, tools → `03-Resources/[subfolder]/`
+- Personal development, ongoing life areas → `${AREAS_BASE}/[subfolder]/`
+- Active projects with defined outcomes → `${PROJECTS_BASE}/[subfolder]/`
+- Reference material, articles, guides, tools → `${RESOURCES_BASE}/[subfolder]/`
 - If uncertain about destination → **ask the user** (this is a structural decision)
 
 ### 3c. Build Frontmatter
@@ -268,11 +270,11 @@ Per ${WIKI_ROOT}/CLAUDE.md:
 
 ## Step 4 — File the Note
 
-1. **Move the file** from `00-Inbox/` (or `Clippings/`) to the destination folder
+1. **Move the file** from `${INBOX_BASE}/` (or `Clippings/`) to the destination folder
    - Use a clean, human-readable filename: "Docker vs Proxmox.md", not "docker-vs-proxmox-2026.md"
    - If the original filename is fine, keep it
 2. **Update the destination folder's `_index.md`** — add a row with the note's title, type, status, and summary
-3. **Do NOT update `00-Inbox/_index.md`** — inbox is transient, no index maintained there
+3. **Do NOT update `${INBOX_BASE}/_index.md`** — inbox is transient, no index maintained there
 4. If the note fits into a subfolder that doesn't exist yet, create the subfolder and its `_index.md`
 
 ---
@@ -285,11 +287,11 @@ After all items are processed, present a summary:
 ## Inbox Processing Complete
 
 ### Filed
-- "Note Title" → 01-Areas/Home-Lab/ (type: reference, tags: home/audio, tech/hardware)
-- "Another Note" → 03-Resources/Articles/ (type: article, tags: tech/software)
+- "Note Title" → ${AREAS_BASE}/<Subject>/ (type: reference, tags: home/audio, tech/hardware)
+- "Another Note" → ${RESOURCES_BASE}/Articles/ (type: article, tags: tech/software)
 
 ### Needs Your Input
-- "Ambiguous Note" — couldn't determine destination. Options: [A] 01-Areas/Finance/ [B] 03-Resources/Guides/
+- "Ambiguous Note" — couldn't determine destination. Options: [A] ${AREAS_BASE}/Finance/ [B] ${RESOURCES_BASE}/Guides/
 
 ### Skipped
 - None (or list reasons)

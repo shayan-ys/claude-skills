@@ -1,11 +1,11 @@
 {
   "name": "shayan-ys",
   "owner": {
-    "name": "Shayan Yousefi",
+    "name": "Shayan Ys",
     "url": "https://github.com/shayan-ys"
   },
   "metadata": {
-    "description": "Personal Claude Code plugins by Shayan Yousefi — Obsidian/PARA tooling, Google Docs helpers, research methodology."
+    "description": "Personal Claude Code plugins by Shayan Ys — Obsidian/PARA tooling, Google Docs helpers, research methodology."
   },
   "plugins": [
     {
@@ -19,9 +19,14 @@
       "description": "Buying-decision research methodology with parallel teammates and health-priority bias."
     },
     {
+      "name": "travel-research",
+      "source": "./plugins/travel-research",
+      "description": "Interactive trip-planning companion with parallel Google Maps teammates; outputs land in an Obsidian/PARA vault."
+    },
+    {
       "name": "obsidian-para",
       "source": "./plugins/obsidian-para",
-      "description": "Four skills for maintaining an Obsidian vault organized by PARA: lint, inbox-process, standup-notes, travel-research."
+      "description": "Three skills for maintaining an Obsidian vault organized by PARA: wiki-lint, wiki-process, standup-notes."
     }
   ]
 }

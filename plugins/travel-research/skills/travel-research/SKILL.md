@@ -20,7 +20,7 @@ Before asking anything, do two reads in parallel:
 
 1. **Destination-specific work** — read `${WIKI_ROOT}/${TRIPS_BASE}/<Destination>/Ideas.md` if it exists. The **Trip Context** block at the top is machine-readable state from a prior run.
 
-2. **Past trip diaries** — Glob `${WIKI_ROOT}/${TRIPS_BASE}/*Diary*.md` (or the equivalent in the user's vault) and read the most recent 1-2. The `## Takeaways for Future Trips` section in those notes is the user's lived lessons-learned ledger; fold those into the current trip's planning so mistakes don't compound. Example: the Apr 2026 Montreal-Quebec diary surfaces "Uber unreliable outside Toronto," "VIA economy food runs out," "Plan B for blown days," and "verify shoulder-season hours by phone" — all of which become defaults below.
+2. **Past trip diaries** — Glob `${WIKI_ROOT}/${TRIPS_BASE}/*Diary*.md` (or the equivalent in the user's vault) and read the most recent 1-2. The `## Takeaways for Future Trips` section in those notes is the user's lived lessons-learned ledger; fold the takeaways from your most recent trip diary into the current trip's planning so past lessons compound.
 
 **If the destination Ideas.md exists:** parse the Trip Context, then show a short menu instead of re-triaging:
 
@@ -62,7 +62,7 @@ Before I dive in, quick triage. Answer what you know, leave the rest blank:
 
 **Interpretation rules:**
 - Default to couples-friendly framing when trip context implies paired travel unless the user says otherwise (prefer asking once if ambiguity remains).
-- Based near Toronto — if transport is blank and the destination is drivable, assume driving and confirm.
+- If the destination is within driving distance of the user's home base and transport is blank, assume driving and confirm.
 - If `vibe` is blank, infer from destination + duration (Kyoto weekend ≠ Kyoto week; both ≠ Algonquin cabin weekend).
 
 ## Phase 2 — Confirmation gate
@@ -100,7 +100,7 @@ Some categories consistently show up in post-trip diaries as "we should have pla
 - 1 indoor activity within 15-min walk (spa, museum, café-with-couches, indie cinema)
 - Note streaming-service availability or Wi-Fi quality for the stay if known
 
-File as a "Plan B" callout in Ideas.md, not slotted into the itinerary. Real-world: the Apr 2026 Montreal–Quebec trip lost a full Quebec City day to no Plan B — a concrete lesson-from-the-road that drove this checklist.
+File as a "Plan B" callout in Ideas.md, not slotted into the itinerary. Real-world: the Apr 2026 Montreal–Quebec trip lost a full Quebec City day to no Plan B — a concrete lesson-from-the-road that drove this checklist. _(author's own past trip — illustrative)_
 
 **Transit-pass options** — if the destination has a metro/subway/tram:
 
@@ -110,9 +110,9 @@ File as a "Plan B" callout in Ideas.md, not slotted into the itinerary. Real-wor
 
 **Rail / long-flight legs in economy** — if any leg is economy and >3 hr:
 
-- Add an Open TODO: "Buy real food at \<departure station\> before boarding" (VIA economy hot meals run out)
-- Recommend the Business class upgrade if available — specifically flag Toronto–Montreal–Quebec VIA where ~\$30/pp gets a hot meal, free drinks, and real seating
-- Build a 90-min buffer into any tight connection after a VIA leg — delays >60 min are routine
+- Add an Open TODO: "Buy real food at \<departure station\> before boarding" (economy hot meals run out on many rail services)
+- Recommend the Business class upgrade if available — e.g. for VIA Rail (Canada): the Toronto–Montreal–Quebec corridor where ~\$30/pp gets a hot meal, free drinks, and real seating
+- Build a 90-min buffer into any tight connection after a long rail leg — delays >60 min are routine on many corridors
 
 **Layovers in the 1-3 hr band** — at any transit hub on the route:
 
@@ -226,7 +226,7 @@ created: <today YYYY-MM-DD>
 updated: <today YYYY-MM-DD>
 summary: "Couples trip to <Destination>, <dates> — restaurants, activities, and itinerary."
 related:
-  - "[[Well Travelled]]"
+  - "[[<Your Trips MOC>]]"
 source: "original"
 aliases: ["<Destination> trip", "<Destination> getaway"]
 ---
@@ -359,7 +359,7 @@ Link all Findings notes from Ideas.md under `## Detailed Research`.
 
 ## Phase 6 — Update indexes
 
-1. `${WIKI_ROOT}/02-Projects/_index.md` — add entries for every new note, alphabetical.
+1. `${WIKI_ROOT}/${PROJECTS_BASE}/_index.md` — add entries for every new note, alphabetical.
 2. `${WIKI_ROOT}/${TRIPS_BASE}/_index.md` — create if missing, per `${WIKI_ROOT}/CLAUDE.md` index format.
 
 ## Phase 7 — Summary

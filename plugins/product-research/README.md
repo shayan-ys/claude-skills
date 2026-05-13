@@ -13,3 +13,7 @@ The diligence ramps up sharply for products in long-term contact with the user â
 Spawns multiple parallel research teammates, each with a distinct angle (toxicology, longevity, third-party testing, real-world failure modes), then synthesizes neutral surveys into an opinionated recommendation tailored to the user's constraints.
 
 See [SKILL.md](./SKILL.md) for the agent-facing workflow.
+
+## License
+
+MIT.

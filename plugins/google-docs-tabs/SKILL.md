@@ -8,8 +8,8 @@ description: Read and write Google Docs (including the new tabs/subtabs feature)
 ## When to use
 The user wants to read or modify a **Google Doc** — most often one with the new tabs/subtabs feature (e.g. a master resume doc with Resume / Cover letters / Interviews top-level tabs and nested per-job subtabs). Examples:
 - "Add a subtab under Interviews for X"
-- "Write Y into the Petra prep tab"
-- "Read what's in the IMCD prep tab"
+- "Write Y into the <Company> prep tab"
+- "Read what's in the <Company> prep tab"
 - "List all tabs in the resume doc"
 
 ## The one rule that matters
@@ -57,7 +57,7 @@ gdocs.py tabs <docId>
 gdocs.py find-tab <docId> "Interviews"
 
 # 3. Create a subtab under a parent (parentTabId optional → root-level)
-gdocs.py add-tab <docId> "Petra prep" t.he1fzl2sscc9
+gdocs.py add-tab <docId> "Acme prep" t.he1fzl2sscc9
 
 # 4. Write at start of a tab / append at end of a tab (plain text only)
 gdocs.py write  <docId> <tabId> "hello world"
@@ -83,9 +83,9 @@ gdocs.py append $DOC $NEW "$(cat draft.md)"
 ## Pitfalls (the things that already burned us)
 
 1. **Tab titles must be globally unique within a doc.** The API returns
-   `Invalid requests[0].addDocumentTab: Tab title must be unique`. If "Petra"
+   `Invalid requests[0].addDocumentTab: Tab title must be unique`. If "Acme"
    already exists as a Cover-letters subtab, the new Interviews subtab must be
-   "Petra prep" (matching the existing `<Company> prep` convention) or similar.
+   "Acme prep" (matching the existing `<Company> prep` convention) or similar.
 
 2. **The `fields=` parameter is poison whenever `includeTabsContent=True`.** Every
    value — `'tabs'`, `'tabs(tabProperties)'`, `'*'`, `'tabs(tabProperties,documentTab)'` —
