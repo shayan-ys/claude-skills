@@ -1,0 +1,12 @@
+[project]
+name = "car-invoice-scripts"
+version = "0.1.0"
+description = "Phase 1 orchestrator: Paperless car invoices → OCR → Claude extraction → staged JSON (Mac/Apple Silicon only)."
+requires-python = ">=3.11"
+dependencies = [
+    "car-invoice-common",
+    "pyyaml",
+]
+
+[tool.uv.sources]
+car-invoice-common = { path = "common", editable = true }

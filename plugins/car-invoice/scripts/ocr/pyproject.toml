@@ -1,0 +1,11 @@
+[project]
+name = "car-invoice-ocr"
+version = "0.1.0"
+description = "PaddleOCR-VL 1.5 4-bit OCR wrapper (MLX, Mac/Apple Silicon only) for the car-invoice plugin."
+requires-python = ">=3.11"
+dependencies = [
+    "mlx-vlm>=0.4.4",
+    "pypdfium2",
+    "numpy",
+    "Pillow",
+]

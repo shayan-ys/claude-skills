@@ -1,0 +1,10 @@
+[project]
+name = "car-invoice-common"
+version = "0.1.0"
+description = "Shared utilities for the car-invoice plugin (Paperless-ngx client, pipeline state helpers, OCR quality gate)."
+requires-python = ">=3.11"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

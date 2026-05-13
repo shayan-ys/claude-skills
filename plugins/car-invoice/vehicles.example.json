@@ -1,0 +1,18 @@
+{
+  "vehicles": [
+    {
+      "key": "sedan",
+      "name": "2020 Toyota Camry SE",
+      "vin": "4T1B11HK0LU000001",
+      "paperless_storage_path": "car/sedan/{created_year}/",
+      "paperless_tag": "sedan"
+    },
+    {
+      "key": "suv",
+      "name": "2022 Honda CR-V EX",
+      "vin": "2HKRW2H84NH000001",
+      "paperless_storage_path": "car/suv/{created_year}/",
+      "paperless_tag": "suv"
+    }
+  ]
+}
