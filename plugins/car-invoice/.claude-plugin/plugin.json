@@ -1,6 +1,6 @@
 {
   "name": "car-invoice",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Process scanned car-maintenance invoices end-to-end — OCR, structured extraction, lint, and stage to Paperless-ngx. Mac/Apple Silicon only (MLX OCR).",
   "author": {
     "name": "Shayan Ys",
