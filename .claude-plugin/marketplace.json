@@ -27,6 +27,11 @@
       "name": "obsidian-para",
       "source": "./plugins/obsidian-para",
       "description": "Three skills for maintaining an Obsidian vault organized by PARA: wiki-lint, wiki-process, standup-notes."
+    },
+    {
+      "name": "notes-publish",
+      "source": "./plugins/notes-publish",
+      "description": "Publish a writeup as a private, unguessable-URL page on notes.shayanys.com (personal pipeline)."
     }
   ]
 }
