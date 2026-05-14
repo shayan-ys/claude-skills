@@ -6,5 +6,27 @@
     "name": "Shayan Ys",
     "url": "https://github.com/shayan-ys"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "userConfig": {
+    "wikiRoot": {
+      "type": "string",
+      "title": "Wiki root path",
+      "description": "Relative or absolute path to your Obsidian vault root (e.g. 'Wiki' or '~/Documents/MyVault').",
+      "required": true
+    },
+    "tripsBase": {
+      "type": "string",
+      "title": "Trips folder",
+      "description": "Path under WIKI_ROOT where trip project notes live (e.g. '02-Projects/Trips').",
+      "required": false,
+      "default": "02-Projects/Trips"
+    },
+    "projectsBase": {
+      "type": "string",
+      "title": "Projects folder",
+      "description": "Folder name for defined-outcome projects at the vault root, used when updating the projects index (e.g. '02-Projects'). Vanilla PARA users can use 'Projects'.",
+      "required": false,
+      "default": "02-Projects"
+    }
+  }
 }

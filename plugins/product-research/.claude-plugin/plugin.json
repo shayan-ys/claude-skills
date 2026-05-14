@@ -6,5 +6,20 @@
     "name": "Shayan Ys",
     "url": "https://github.com/shayan-ys"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "userConfig": {
+    "wikiRoot": {
+      "type": "string",
+      "title": "Wiki root path",
+      "description": "Relative or absolute path to your Obsidian vault root (e.g. 'Wiki' or '~/Documents/MyVault'). Used to locate your vault's CLAUDE.md conventions doc when writing wiki notes.",
+      "required": false
+    },
+    "resourcesBase": {
+      "type": "string",
+      "title": "Resources folder",
+      "description": "Folder name for reference material at the vault root. Research surveys are saved under <resourcesBase>/Research/<topic>/. Vanilla PARA users can use 'Resources'.",
+      "required": false,
+      "default": "03-Resources"
+    }
+  }
 }

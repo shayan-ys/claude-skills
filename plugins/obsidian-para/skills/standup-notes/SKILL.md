@@ -1,12 +1,12 @@
 ---
 name: standup-notes
-description: "Generate prep notes for ${COMPANY_NAME} standups from recent Work-Diary entries — example cadence shows Mon/Wed mornings; substitute your real cadence in ${COMPANY_CONTEXT_NOTE}. Reads ${WIKI_ROOT}/${WORK_DIARY_BASE}/ for the window since last standup, synthesizes 'Since last standup / Plan / Blockers' bullets with inline project wikilinks, and writes ${WIKI_ROOT}/${STANDUP_NOTES_BASE}/YYYY-MM-DD.md. Trigger on standup-notes, standup prep, prep my standup, what should I say at standup, upcoming ${COMPANY_NAME} standup, or scheduled headless runs if you automate this."
+description: "Generate prep notes for your company's standups from recent work-diary entries. Reads your work-diary folder for the window since the last standup, synthesizes 'Since last standup / Plan / Blockers' bullets with inline project wikilinks, and writes a dated note to your standup-notes folder. Trigger on standup-notes, standup prep, prep my standup, what should I say at standup, upcoming standup, or scheduled headless runs if you automate this."
 argument-hint: "[today | tomorrow | YYYY-MM-DD | --window=YYYY-MM-DD..YYYY-MM-DD]"
 ---
 
 # Standup Notes
 
-Produce a focused, Obsidian-native prep note for the next ${COMPANY_NAME} standup by reading the user's daily work-diary entries since the previous standup and shaping them into talking points.
+Produce a focused, Obsidian-native prep note for the next ${user_config.companyName} standup by reading the user's daily work-diary entries since the previous standup and shaping them into talking points.
 
 ---
 
@@ -14,9 +14,9 @@ Produce a focused, Obsidian-native prep note for the next ${COMPANY_NAME} standu
 
 Read these files first. They are the operational ground truth — do not skip.
 
-1. `${COMPANY_CONTEXT_NOTE}` — company context. The **`## Standup Cadence`** section is authoritative on window logic; if it ever conflicts with what's written here, trust the note.
-2. `${WIKI_ROOT}/${WORK_DIARY_BASE}/_index.md` — list of diary entries with summaries. This is your navigation index — do not glob the whole vault.
-3. `${WIKI_ROOT}/${STANDUP_NOTES_BASE}/_index.md` — for the date of the last standup note (if any), to anchor the "since last standup" window.
+1. `${user_config.companyContextNote}` — company context. The **`## Standup Cadence`** section is authoritative on window logic; if it ever conflicts with what's written here, trust the note.
+2. `${user_config.wikiRoot}/${user_config.workDiaryBase}/_index.md` — list of diary entries with summaries. This is your navigation index — do not glob the whole vault.
+3. `${user_config.wikiRoot}/${user_config.standupNotesBase}/_index.md` — for the date of the last standup note (if any), to anchor the "since last standup" window.
 
 ---
 
@@ -33,7 +33,7 @@ Parse `$ARGUMENTS`:
 
 **Weekday → window** (your company's cadence — adjust the weekday→window logic below; the table is an **illustrative** Mon/Wed example only):
 
-**Default example** (must match the `## Standup Cadence` section in `${COMPANY_CONTEXT_NOTE}` when you maintain one):
+**Default example** (must match the `## Standup Cadence` section in `${user_config.companyContextNote}` when you maintain one):
 
 | Standup weekday | Work window covered |
 |---|---|
@@ -49,7 +49,7 @@ Parse `$ARGUMENTS`:
 
 For each date in the work window:
 
-1. Check whether `${WIKI_ROOT}/${WORK_DIARY_BASE}/YYYY-MM-DD.md` exists.
+1. Check whether `${user_config.wikiRoot}/${user_config.workDiaryBase}/YYYY-MM-DD.md` exists.
 2. If yes, read it in full. Extract:
    - The lead paragraph (1-sentence-per-day summary)
    - Each `## HH:MM` block
@@ -79,7 +79,7 @@ Group entries by theme rather than by day. Standup audiences want the *what got 
 
 ## Step 4a — Write the Standup Note (normal case)
 
-Path: `${WIKI_ROOT}/${STANDUP_NOTES_BASE}/<standup-date>.md`
+Path: `${user_config.wikiRoot}/${user_config.standupNotesBase}/<standup-date>.md`
 
 If the file already exists (re-running on the same standup day), regenerate the body and bump `updated:`. Don't append.
 
@@ -175,19 +175,19 @@ Skip entirely if you'd rather rely on Obsidian Sync / calendar reminders alone �
 
 ## Step 5 — Index and Open
 
-1. Update `${WIKI_ROOT}/${STANDUP_NOTES_BASE}/_index.md` — add a row at the **top** (reverse-chronological, newest first). Schema:
+1. Update `${user_config.wikiRoot}/${user_config.standupNotesBase}/_index.md` — add a row at the **top** (reverse-chronological, newest first). Schema:
 
    ```
    | [[YYYY-MM-DD]] | journal | evergreen | <summary from frontmatter> |
    ```
 
-2. Open the note in Obsidian (per vault `${WIKI_ROOT}/CLAUDE.md` "Open in Obsidian" rule — this is a substantive new note, not a bookkeeping edit):
+2. Open the note in Obsidian (per vault `${user_config.wikiRoot}/CLAUDE.md` "Open in Obsidian" rule — this is a substantive new note, not a bookkeeping edit):
 
    ```bash
-   open "obsidian://open?vault=<YOUR_OBSIDIAN_VAULT_NAME>&file=<URL-encode `${STANDUP_NOTES_BASE}/YYYY-MM-DD.md` paths using %2F for slashes>"
+   open "obsidian://open?vault=<YOUR_OBSIDIAN_VAULT_NAME>&file=<URL-encode `${user_config.standupNotesBase}/YYYY-MM-DD.md` paths using %2F for slashes>"
    ```
 
-   Adjust `vault=` to match Obsidian's **exact** vault identifier and build `file=` as the vault-relative URL-encoded path to the standup note (derive from `${STANDUP_NOTES_BASE}`).
+   Adjust `vault=` to match Obsidian's **exact** vault identifier and build `file=` as the vault-relative URL-encoded path to the standup note (derive from `${user_config.standupNotesBase}`).
 
    Skip this in headless / CI mode if `open` is unavailable — surface the filesystem path instead.
 
@@ -199,7 +199,7 @@ Final message to the user:
 
 ```
 Standup notes ready for <date> at:
-  `${WIKI_ROOT}/${STANDUP_NOTES_BASE}/<YYYY-MM-DD>.md`
+  `${user_config.wikiRoot}/${user_config.standupNotesBase}/<YYYY-MM-DD>.md`
 
 Window: <start> → <end> (<N> diary entries read)
 Projects surfaced: [[Project A]], [[Project B]]
@@ -214,9 +214,9 @@ Skip the verbose summary in headless mode — the optional lightweight notificat
 
 | Symptom | Fix |
 |---|---|
-| Company context note (`${COMPANY_CONTEXT_NOTE}`) missing — can't read Standup Cadence | Stop. Tell user to restore the note before re-running. Don't guess cadence. |
+| Company context note (`${user_config.companyContextNote}`) missing — can't read Standup Cadence | Stop. Tell user to restore the note before re-running. Don't guess cadence. |
 | `Work-Diary/_index.md` missing but folder has files | Read the folder directly via Glob, regenerate the index after writing the standup note. |
-| Argument is ambiguous (`tomorrow` on a Fri when your cadence is Mon/Wed example → weekend straddles windows) | Pick the next standup-eligible weekday per **your** `${COMPANY_CONTEXT_NOTE}` (or `--window`). Note the assumption in the standup note's `> Covers...` blockquote. |
+| Argument is ambiguous (`tomorrow` on a Fri when your cadence is Mon/Wed example → weekend straddles windows) | Pick the next standup-eligible weekday per **your** `${user_config.companyContextNote}` (or `--window`). Note the assumption in the standup note's `> Covers...` blockquote. |
 | Diary entry exists but is malformed (no `## HH:MM` blocks, no frontmatter) | Still read it — fall back to treating the body as one block. Flag in report. |
 | File already exists for this standup date | Overwrite body; preserve `created:`; bump `updated:`. |
 
@@ -224,4 +224,4 @@ Skip the verbose summary in headless mode — the optional lightweight notificat
 
 ## Future: headless automation (v2)
 
-A cron-driven version of this workflow can wake up on mornings before standup on **your cadence**, run the drafting agent (`cursor-agent`, `claude --headless`, or similar), and ping you via your notification stack. Maintain any plan doc **in your own vault** (`${WIKI_ROOT}/`) if you automate this — out of scope for the shipped default skill — don't flip it on without explicit user ops.
+A cron-driven version of this workflow can wake up on mornings before standup on **your cadence**, run the drafting agent (`cursor-agent`, `claude --headless`, or similar), and ping you via your notification stack. Maintain any plan doc **in your own vault** (`${user_config.wikiRoot}/`) if you automate this — out of scope for the shipped default skill — don't flip it on without explicit user ops.

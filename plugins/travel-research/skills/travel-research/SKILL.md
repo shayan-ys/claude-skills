@@ -1,6 +1,6 @@
 ---
 name: travel-research
-description: "Interactive travel-planning companion — triages booked vs research-needed, uses Google Maps MCP and parallel sonnet/haiku teammates to build curated Ideas.md + Findings notes under ${WIKI_ROOT}/${TRIPS_BASE}/. Triggers on trip planning (place names plus weekend/getaway/etc.), vague asks like Elora/Montreal, ratings/reviews, or mentions of an existing trips folder."
+description: "Interactive travel-planning companion — triages booked vs research-needed, uses Google Maps MCP and parallel sonnet/haiku teammates to build curated Ideas.md + Findings notes in the trips folder. Triggers on trip planning (place names plus weekend/getaway/etc.), vague asks like "any ideas for X?", ratings/reviews, or mentions of an existing trips folder."
 argument-hint: "<Destination?>"
 ---
 
@@ -12,15 +12,15 @@ The skill runs four phases: **Discover → Triage → Confirm → Research**. At
 
 _Concrete trip examples below (e.g. Montreal, Quebec City, Toronto) are the author's own — illustrative vignettes about planning lessons, not assumptions about your vault. Replace with your own past-trip lessons in your fork._
 
-The output lives in your vault at `${WIKI_ROOT}/${TRIPS_BASE}/<Destination>/`. All notes follow `${WIKI_ROOT}/CLAUDE.md` — your vault's conventions doc, if present — (frontmatter, wikilinks, mobile formatting, lead paragraphs, index updates).
+The output lives in your vault at `${user_config.wikiRoot}/${user_config.tripsBase}/<Destination>/`. All notes follow `${user_config.wikiRoot}/CLAUDE.md` — your vault's conventions doc, if present — (frontmatter, wikilinks, mobile formatting, lead paragraphs, index updates).
 
 ## Phase 0 — Discover existing work
 
 Before asking anything, do two reads in parallel:
 
-1. **Destination-specific work** — read `${WIKI_ROOT}/${TRIPS_BASE}/<Destination>/Ideas.md` if it exists. The **Trip Context** block at the top is machine-readable state from a prior run.
+1. **Destination-specific work** — read `${user_config.wikiRoot}/${user_config.tripsBase}/<Destination>/Ideas.md` if it exists. The **Trip Context** block at the top is machine-readable state from a prior run.
 
-2. **Past trip diaries** — Glob `${WIKI_ROOT}/${TRIPS_BASE}/*Diary*.md` (or the equivalent in the user's vault) and read the most recent 1-2. The `## Takeaways for Future Trips` section in those notes is the user's lived lessons-learned ledger; fold the takeaways from your most recent trip diary into the current trip's planning so past lessons compound.
+2. **Past trip diaries** — Glob `${user_config.wikiRoot}/${user_config.tripsBase}/*Diary*.md` (or the equivalent in the user's vault) and read the most recent 1-2. The `## Takeaways for Future Trips` section in those notes is the user's lived lessons-learned ledger; fold the takeaways from your most recent trip diary into the current trip's planning so past lessons compound.
 
 **If the destination Ideas.md exists:** parse the Trip Context, then show a short menu instead of re-triaging:
 
@@ -139,7 +139,7 @@ File as a "Plan B" callout in Ideas.md, not slotted into the itinerary. Real-wor
 - **Haiku teammate** (orchestrator discretion) for dead-simple single-shot lookups with no judgment involved: "current hours for X", "is this place open Sundays", "confirm address." Haiku has no auto-mode, so pre-approve the single turn in the spawn prompt.
 - **Never** spawn Opus teammates without explicit user approval.
 
-**When to spawn a teammate for web research (not just Maps):** neighbourhood safety, recent restaurant sentiment, "still good?" signal. The sonnet teammate uses WebSearch / WebFetch for Reddit threads (`r/travel`, city subreddits), crime maps, police-report summaries, and travel forums. Include source URLs in the teammate's return so they show up in the Findings note (${WIKI_ROOT}/CLAUDE.md → "External URL Rule" section, if documented there).
+**When to spawn a teammate for web research (not just Maps):** neighbourhood safety, recent restaurant sentiment, "still good?" signal. The sonnet teammate uses WebSearch / WebFetch for Reddit threads (`r/travel`, city subreddits), crime maps, police-report summaries, and travel forums. Include source URLs in the teammate's return so they show up in the Findings note (${user_config.wikiRoot}/CLAUDE.md → "External URL Rule" section, if documented there).
 
 ### Standard teammate pattern
 
@@ -212,7 +212,7 @@ The lead then presents the 2-3 options in chat, user picks, and the rest of the 
 
 ## Phase 4 — Write Ideas.md
 
-Create `${WIKI_ROOT}/${TRIPS_BASE}/<Destination>/Ideas.md`. The **Trip Context** block at the top is the source of truth for re-invocations — keep it machine-parseable.
+Create `${user_config.wikiRoot}/${user_config.tripsBase}/<Destination>/Ideas.md`. The **Trip Context** block at the top is the source of truth for re-invocations — keep it machine-parseable.
 
 ```markdown
 ---
@@ -325,7 +325,7 @@ Use the `mcp__google-maps__maps_search_places` or `mcp__google-maps__maps_place_
 
 **Skip linking only for** generic geographic region labels used as context (e.g. "Old Town" appearing as a neighbourhood descriptor, not a named destination you're recommending). If it's a destination the user might navigate to, link it.
 
-This rule is consistent with `${WIKI_ROOT}/CLAUDE.md` → "Google Maps Place Rule". Both must stay in sync if that section exists.
+This rule is consistent with `${user_config.wikiRoot}/CLAUDE.md` → "Google Maps Place Rule". Both must stay in sync if that section exists.
 - **Distance column** ("From stay") shows walk time if under 20 min, otherwise transit time; omit the column entirely if lodging is TBD.
 - **Phone column**: include for places that have one; use `—` if not.
 - Collapsible `> [!info]-` for review summaries (keeps the note scannable).
@@ -335,7 +335,7 @@ This rule is consistent with `${WIKI_ROOT}/CLAUDE.md` → "Google Maps Place Rul
 
 ## Phase 5 — Findings notes
 
-For each category, create a Findings note in the same folder (not a subfolder): `${WIKI_ROOT}/${TRIPS_BASE}/<Destination>/<Destination> — <Category>.md`. These carry the raw detail: address, hours, phone, website, menu highlights, full review excerpts, web sentiment with source URLs, practical tips.
+For each category, create a Findings note in the same folder (not a subfolder): `${user_config.wikiRoot}/${user_config.tripsBase}/<Destination>/<Destination> — <Category>.md`. These carry the raw detail: address, hours, phone, website, menu highlights, full review excerpts, web sentiment with source URLs, practical tips.
 
 ```yaml
 ---
@@ -359,8 +359,8 @@ Link all Findings notes from Ideas.md under `## Detailed Research`.
 
 ## Phase 6 — Update indexes
 
-1. `${WIKI_ROOT}/${PROJECTS_BASE}/_index.md` — add entries for every new note, alphabetical.
-2. `${WIKI_ROOT}/${TRIPS_BASE}/_index.md` — create if missing, per `${WIKI_ROOT}/CLAUDE.md` index format.
+1. `${user_config.wikiRoot}/${user_config.projectsBase}/_index.md` — add entries for every new note, alphabetical.
+2. `${user_config.wikiRoot}/${user_config.tripsBase}/_index.md` — create if missing, per `${user_config.wikiRoot}/CLAUDE.md` index format.
 
 ## Phase 7 — Summary
 

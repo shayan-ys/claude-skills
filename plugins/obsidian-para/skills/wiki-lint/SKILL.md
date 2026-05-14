@@ -20,10 +20,10 @@ This skill follows the vault's "Don't Ask / Do Ask" principle. Mechanical fixes 
 
 ## Step 0 — Load the Rulebook
 
-1. Read `${WIKI_ROOT}/CLAUDE.md` — this is the authoritative schema. Every check below validates against it.
+1. Read `${user_config.wikiRoot}/CLAUDE.md` — this is the authoritative schema. Every check below validates against it.
 2. Read the target folder's `_index.md` to get the current inventory.
 3. If linting the full vault, read all top-level `_index.md` files:
-   - `${INBOX_BASE}/_index.md`, `${AREAS_BASE}/_index.md`, `${PROJECTS_BASE}/_index.md`, `${RESOURCES_BASE}/_index.md`, `${JOURNAL_BASE}/_index.md`, `${MOC_BASE}/_index.md`
+   - `${user_config.inboxBase}/_index.md`, `${user_config.areasBase}/_index.md`, `${user_config.projectsBase}/_index.md`, `${user_config.resourcesBase}/_index.md`, `${user_config.journalBase}/_index.md`, `${user_config.mocBase}/_index.md`
 
 ---
 
@@ -34,10 +34,10 @@ For a full-vault lint, if you have a multi-pane terminal multiplexer like [cmux]
 ```
 Team: "vault-lint"
 Teammates:
-  - "lint-areas"    → ${AREAS_BASE}/
-  - "lint-projects" → ${PROJECTS_BASE}/
-  - "lint-resources"→ ${RESOURCES_BASE}/
-  - "lint-journal"  → ${JOURNAL_BASE}/ and ${MOC_BASE}/
+  - "lint-areas"    → ${user_config.areasBase}/
+  - "lint-projects" → ${user_config.projectsBase}/
+  - "lint-resources"→ ${user_config.resourcesBase}/
+  - "lint-journal"  → ${user_config.journalBase}/ and ${user_config.mocBase}/
 ```
 
 For a scoped lint (single folder), skip teammates and run checks directly.
@@ -57,7 +57,7 @@ Run every check below. Track findings in categories.
 
 ### 2a. Frontmatter Validation
 
-For each note, verify against the schema in `${WIKI_ROOT}/CLAUDE.md`:
+For each note, verify against the schema in `${user_config.wikiRoot}/CLAUDE.md`:
 
 - [ ] Has YAML frontmatter block
 - [ ] Has all required fields: `title`, `type`, `tags`, `status`, `created`, `updated`, `summary`, `related`, `source`, `aliases`
@@ -68,7 +68,7 @@ For each note, verify against the schema in `${WIKI_ROOT}/CLAUDE.md`:
 - [ ] `aliases` field exists (even if empty `[]`)
 - [ ] `created` and `updated` are valid dates
 
-Flag web clippings in `${INBOX_BASE}/Clippings/` separately — they arrive with non-standard frontmatter and need full rewriting during processing, not just patching.
+Flag web clippings in `${user_config.inboxBase}/Clippings/` separately — they arrive with non-standard frontmatter and need full rewriting during processing, not just patching.
 
 ### 2b. Lead Paragraph Check
 
@@ -76,7 +76,7 @@ Every note must have a lead paragraph (2-3 sentences) immediately after the `# T
 
 ### 2c. Heading Structure Check
 
-For notes with types that have a heading contract (article, research, project, idea), verify they have the expected H2 sections per `${WIKI_ROOT}/CLAUDE.md`'s Heading Structure Contract table.
+For notes with types that have a heading contract (article, research, project, idea), verify they have the expected H2 sections per `${user_config.wikiRoot}/CLAUDE.md`'s Heading Structure Contract table.
 
 ### 2d. Orphan Notes
 
@@ -117,26 +117,26 @@ For each folder with an `_index.md`, verify:
 
 ### 2j. Unprocessed Inbox
 
-Count items in `${INBOX_BASE}/` (including `Clippings/`). These haven't been filed yet.
+Count items in `${user_config.inboxBase}/` (including `Clippings/`). These haven't been filed yet.
 
 ### 2k. MOC Opportunities
 
-If any tag (check via `obsidian` CLI / Obsidian MCP with **your vault name** — often the basename of `${WIKI_ROOT}` — e.g. `obsidian vault="${OBSIDIAN_VAULT_NAME}" tags counts`) or topic cluster has 5+ notes but no MOC in `${MOC_BASE}/`, flag it as a MOC candidate.
+If any tag (check via `obsidian` CLI / Obsidian MCP with **your vault name** — often the basename of `${user_config.wikiRoot}` — e.g. `obsidian vault="${user_config.obsidianVaultName}" tags counts`) or topic cluster has 5+ notes but no MOC in `${user_config.mocBase}/`, flag it as a MOC candidate.
 
 ### 2l. Tag Hygiene
 
-Run `obsidian vault="${OBSIDIAN_VAULT_NAME}" tags counts` (vault name matches your Obsidian vault, often the basename of `${WIKI_ROOT}`) and look for:
+Run `obsidian vault="${user_config.obsidianVaultName}" tags counts` (vault name matches your Obsidian vault, often the basename of `${user_config.wikiRoot}`) and look for:
 - Tags used only once (possible typos or one-offs)
-- Tags outside the established namespaces in `${WIKI_ROOT}/CLAUDE.md`
+- Tags outside the established namespaces in `${user_config.wikiRoot}/CLAUDE.md`
 - Near-duplicate tags (e.g., `tech/hw` vs `tech/hardware`)
 
 ### 2m. Stale Trips
 
-Find notes in `${WIKI_ROOT}/${TRIPS_BASE}/` (recursively) where `type: project` and `endDate` is more than 14 days in the past (relative to today). These are completed trips that should be archived.
+Find notes in `${user_config.wikiRoot}/${user_config.tripsBase}/` (recursively) where `type: project` and `endDate` is more than 14 days in the past (relative to today). These are completed trips that should be archived.
 
 Surface them as suggestions — do NOT auto-archive. Per the "Ask before doing" principle, present the list and ask the user whether to:
 - Set `status: archived` in place (simplest), or
-- Move to an `Archive/` subfolder inside `${WIKI_ROOT}/${TRIPS_BASE}/` and set `status: archived`
+- Move to an `Archive/` subfolder inside `${user_config.wikiRoot}/${user_config.tripsBase}/` and set `status: archived`
 
 The child notes (Dining, Activities) in the same trip folder are not `type: project` so they won't match directly — but flag them as a group ("along with N child notes") so the user can decide whether to archive the whole folder together.
 
