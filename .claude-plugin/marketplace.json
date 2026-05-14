@@ -29,11 +29,6 @@
       "description": "Three skills for maintaining an Obsidian vault organized by PARA: wiki-lint, wiki-process, standup-notes."
     },
     {
-      "name": "notes-publish",
-      "source": "./plugins/notes-publish",
-      "description": "Publish a writeup as a private, unguessable-URL page on notes.shayanys.com (personal pipeline)."
-    },
-    {
       "name": "car-invoice",
       "source": "./plugins/car-invoice",
       "description": "Process scanned car-maintenance invoices end-to-end — OCR (MLX, Apple Silicon only), structured extraction, lint, and stage to Paperless-ngx."
