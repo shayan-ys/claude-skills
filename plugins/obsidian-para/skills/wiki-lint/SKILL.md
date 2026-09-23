@@ -8,7 +8,7 @@ argument-hint: "[area to focus on, e.g. 'Career' or 'full vault']"
 
 Run a comprehensive health check on the Obsidian Wiki vault, surface issues, and fix them with the user's approval.
 
-**Scope**: If `$ARGUMENTS` names a specific area or folder, limit the lint to that subtree. Otherwise, lint the full vault.
+**Scope**: If the user names a specific area or folder (the argument, when invoked as a command), limit the lint to that subtree. Otherwise, lint the full vault.
 
 ---
 

@@ -22,7 +22,7 @@ Read these files first. They are the operational ground truth — do not skip.
 
 ## Step 1 — Determine Standup Date and Work Window
 
-Parse `$ARGUMENTS`:
+Parse the date or window the user gave (the argument, when invoked as a command):
 
 | Argument | Standup date | Work window |
 |---|---|---|

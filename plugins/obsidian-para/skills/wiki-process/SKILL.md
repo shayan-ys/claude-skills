@@ -12,13 +12,13 @@ Process unprocessed notes from `${user_config.inboxBase}/` into their proper pla
 
 ## Step 0 — Determine Scope
 
-Check what `$ARGUMENTS` says:
+Check what the user asked for (the argument, when invoked as a command):
 
 - **`latest`** or empty → process only the most recently modified file in `${user_config.inboxBase}/` (including `Clippings/`)
 - **`all`** → process every item in `${user_config.inboxBase}/` (including `Clippings/` subfolder)
 - **A specific filename** → process just that file
 
-If `$ARGUMENTS` is empty or ambiguous:
+If the request is empty or ambiguous:
 
 1. List `${user_config.inboxBase}/` and `${user_config.inboxBase}/Clippings/` (excluding `Prompts/` and `Archive/`) and identify the most recently modified file. Read its `title` from frontmatter if present, otherwise fall back to the filename (without `.md`).
 2. Also count the total number of inbox items (across `${user_config.inboxBase}/` and `Clippings/`, excluding `Prompts/` and `Archive/`).
