@@ -1,7 +1,7 @@
 {
   "name": "product-research",
-  "version": "0.1.0",
-  "description": "Buying-decision research methodology with deep prioritization on health and long-term safety for products that contact the body, food, skin, lungs, or sleep. Spawns parallel research teammates and synthesizes neutral surveys into an opinionated recommendation.",
+  "version": "0.2.0",
+  "description": "Buying-decision research methodology with deep prioritization on health and long-term safety for products that contact the body, food, skin, lungs, or sleep. Researches distinct angles in parallel (subagents where available) and synthesizes neutral surveys into an opinionated recommendation.",
   "author": {
     "name": "Shayan Ys",
     "url": "https://github.com/shayan-ys"
@@ -11,7 +11,7 @@
     "wikiRoot": {
       "type": "string",
       "title": "Wiki root path",
-      "description": "Relative or absolute path to your Obsidian vault root (e.g. 'Wiki' or '~/Documents/MyVault'). Used to locate your vault's CLAUDE.md conventions doc when writing wiki notes.",
+      "description": "Relative or absolute path to your Obsidian vault root (e.g. 'Wiki' or '~/Documents/MyVault'). Used to locate your vault's AGENTS.md (or CLAUDE.md) conventions doc when writing wiki notes.",
       "required": false
     },
     "resourcesBase": {

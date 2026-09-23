@@ -1,13 +1,13 @@
 ---
 name: product-research
-description: Buying-decision research for physical products, with deep prioritization on health and long-term safety for items that contact the body, food, skin, lungs, or sleep. Spawns parallel sonnet teammates to survey peer-reviewed literature, independent third-party testing, multi-year owner reports, and regulatory developments — explicitly distrusting product labels, marketing claims ("BPA-free", "non-toxic", "natural"), and retailer-affiliated review sites. Use this skill whenever the user is researching what to buy — cookware, mattresses, water bottles, supplements, sunscreen, deodorant, baby gear, food storage, air purifiers, kitchen appliances, fabrics, paint, furniture, or any product they'll use repeatedly. Trigger even when they don't say "research" explicitly: "thinking about getting X", "what's the best Y", "is Z safe", "should I worry about W", "looking at A vs B" all count. Especially trigger when the product is going to be in long-term contact with the user's body, food, or breathing space.
+description: Buying-decision research for physical products, with deep prioritization on health and long-term safety for items that contact the body, food, skin, lungs, or sleep. Fans out parallel research angles (subagents where available) to survey peer-reviewed literature, independent third-party testing, multi-year owner reports, and regulatory developments — explicitly distrusting product labels, marketing claims ("BPA-free", "non-toxic", "natural"), and retailer-affiliated review sites. Use this skill whenever the user is researching what to buy — cookware, mattresses, water bottles, supplements, sunscreen, deodorant, baby gear, food storage, air purifiers, kitchen appliances, fabrics, paint, furniture, or any product they'll use repeatedly. Trigger even when they don't say "research" explicitly: "thinking about getting X", "what's the best Y", "is Z safe", "should I worry about W", "looking at A vs B" all count. Especially trigger when the product is going to be in long-term contact with the user's body, food, or breathing space.
 ---
 
 # Product Research
 
 Most product-research questions fall into one of two failure modes when answered casually: (1) the answer parrots the brand's marketing, or (2) the answer cites Wirecutter and stops. Neither catches the things that matter for products you use for years — coatings that degrade, materials that leach, replacement chemicals that are nearly as bad as what they replaced, manufacturing batches that fail QC, real-world failure modes that only show up at year three.
 
-This skill is the workflow for doing it properly. The core move is spawning multiple sonnet teammates in parallel, each with a *distinct research angle*, then synthesizing their neutral surveys into an opinionated recommendation. Use it whenever the user is making a purchase decision — especially when the product touches their body, their food, the air they breathe, or where they sleep.
+This skill is the workflow for doing it properly. The core move is researching several *distinct angles* in parallel (subagents where the harness supports them), then synthesizing their neutral surveys into an opinionated recommendation. Use it whenever the user is making a purchase decision — especially when the product touches their body, their food, the air they breathe, or where they sleep.
 
 ## When this matters most
 
@@ -38,18 +38,16 @@ Before spawning anything, get clear on:
 - **Geographic context?** Country/region affects pricing, availability, and regulatory environment.
 - **Existing constraints?** Dietary, allergies, induction stovetop, small apartment, etc.
 
-If 2+ of these are missing and the answer changes meaningfully based on them, ask once with `AskUserQuestion`-style chips. Otherwise proceed with reasonable assumptions and flag them in the output.
+If 2+ of these are missing and the answer changes meaningfully based on them, ask once, offering short answer choices. Otherwise proceed with reasonable assumptions and flag them in the output.
 
-### 2. Spawn parallel sonnet teammates
+### 2. Fan out by research angle
 
-> [!important] The actual research is done by sonnet subagents — never by the lead
-> The lead's job is to triage, fan out, and synthesize. The web searches, document fetches, peer-reviewed literature digs, forum trawls, and price scrapes all happen inside sonnet teammates. If you (the lead) find yourself reaching for `WebSearch`, `WebFetch`, or `defuddle` to do the actual research yourself, stop — that's the anti-pattern this skill exists to prevent. Spawn a teammate instead.
+The lead triages, fans out, and synthesizes. The searching, fetching, literature digs, forum trawls, and price checks happen per angle, one angle at a time in isolation, so no single pass drifts into a generic "best X" summary.
 
-The default fan-out for a health-priority product is **3–4 sonnet research teammates in parallel**, each given a distinct, non-overlapping angle. This is the single most important step — running them sequentially or doing the research in the lead context wastes time, bloats the conversation with raw search output, and burns expensive Opus tokens on work Sonnet does just as well.
+- **Harness with subagents:** spawn one subagent per angle, all in parallel in one step. Pick a cheaper, faster model for them if your harness lets you choose. Do not do the research in the lead context; that bloats it with raw search output.
+- **Harness without subagents** (for example a chat app): research each angle as its own focused pass, write that angle's neutral survey, then move to the next. Keep the passes separate; do not merge angles while researching.
 
-**Every spawn MUST include `model: "sonnet"` explicitly** — omitting it is a bug per the user's CLAUDE.md. Use the general-purpose subagent type unless a more specific type fits (e.g., `Explore` for pure codebase searches, but that rarely applies to product research). **Never use Opus teammates** unless the user explicitly approves it with a one-line justification — if you think the angle needs Opus, stop and ask first.
-
-**Spawn all teammates in a single message with parallel tool calls** so they actually run concurrently. Sequential spawns defeat the purpose of the fan-out.
+The default for a health-priority product is 3–4 angles, each distinct and non-overlapping. This is the most important step.
 
 **Standard angles for health-priority products:**
 
@@ -61,15 +59,15 @@ The default fan-out for a health-priority product is **3–4 sonnet research tea
 
 4. **Expert reviewer consensus** — Wirecutter, America's Test Kitchen, Serious Eats, Consumer Reports, category-specific authorities. What do the trusted reviewers actually pick, and where do they disagree? Note the dissenters (often EWG takes a harder line than mainstream reviewers — both perspectives matter).
 
-**Optional 5th teammate** when relevant:
+**Optional 5th angle** when relevant:
 
 - **Pricing & availability** for the user's region — real local prices, retailers, sale patterns, customs/tariff issues for imports.
 
 For non-health products, drop angle 1 and keep the other three. If the product is purely commodity (a USB cable, a stapler), the whole skill is overkill — just answer directly.
 
-### 3. The teammate prompt template
+### 3. The per-angle brief
 
-Each teammate gets a focused prompt with these elements:
+Each angle gets a focused brief with these elements:
 
 - **The angle they own** (one of the four above)
 - **The specific product category and subcategory**
@@ -77,13 +75,13 @@ Each teammate gets a focused prompt with these elements:
 - **What to distrust** (brand pages, "non-toxic" labels, retailer-funded review sites)
 - **Output format expected** — markdown, ~400–600 words, hyperlinked sources, tight verdict at the end
 
-Tell teammates explicitly: *"Cite peer-reviewed and primary sources. Distinguish settled science from speculation. Flag where the literature has gaps. Hyperlink everything you reference."*
+State explicitly in each brief: *"Cite peer-reviewed and primary sources. Distinguish settled science from speculation. Flag where the literature has gaps. Hyperlink everything you reference."*
 
-Per the user's vault conventions: teammates write **neutral surveys**, not opinionated synthesis. The lead does the synthesis.
+Each angle produces a **neutral survey**, not opinionated synthesis. The lead does the synthesis.
 
 ### 4. Source hierarchy (what to trust)
 
-Pass this hierarchy to teammates and follow it yourself:
+Put this hierarchy in every brief and follow it yourself:
 
 | Tier | Source type | Examples |
 |---|---|---|
@@ -120,7 +118,7 @@ For anything you'll use for years, prioritize evidence about *years 3–10*, not
 
 ### 7. Synthesis (the lead's job)
 
-After teammates return, the lead writes the opinionated recommendation. The synthesis should:
+After the angles are done, the lead writes the opinionated recommendation. The synthesis should:
 
 - Lead with a one-line verdict ("buy X at \~\$Y")
 - Show the diminishing-returns curve as a table when there's a price spectrum
@@ -137,7 +135,7 @@ After teammates return, the lead writes the opinionated recommendation. The synt
 Match the format to the user's surface:
 
 - **Conversational reply** when the user just asked a question. Concise, scannable, hyperlinked. The carbon-steel-pan synthesis (in their wiki) is a good model.
-- **Wiki note** when the user has an Obsidian vault and the topic deserves persistence. Follow your vault's conventions doc (`${user_config.wikiRoot}/CLAUDE.md`) research/synthesis split: neutral surveys go in `${user_config.resourcesBase}/Research/<topic>/` as separate notes; opinionated synthesis goes in a sibling top-level note that links to them.
+- **Wiki note** when the user has an Obsidian vault and the topic deserves persistence. Follow your vault's conventions doc (`AGENTS.md` or `CLAUDE.md` at the vault root) research/synthesis split: neutral surveys go in `${user_config.resourcesBase}/Research/<topic>/` as separate notes; opinionated synthesis goes in a sibling top-level note that links to them.
 - **Both** when the user explicitly asks to save research alongside getting an answer.
 
 ## Example shapes
@@ -161,10 +159,9 @@ Match the format to the user's surface:
 
 ## Common failure modes to avoid
 
-- **Doing the research yourself in the lead context** instead of fanning out. The lead synthesizes; sonnet teammates research. If you're tempted to "just do a quick WebSearch" yourself, that's the failure mode.
-- **Forgetting `model: "sonnet"` on the spawn** — defaults to Opus, burns tokens, violates the user's standing directive.
-- **Spawning teammates sequentially** instead of in a single parallel-tool-call message. Defeats the speed benefit.
-- **Spawning teammates without distinct angles** — they all return the same Wirecutter summary.
+- **Blending angles** into one pass instead of researching each separately. The lead synthesizes; the angles research.
+- **Spawning subagents one after another** when the harness can run them in parallel. Defeats the speed benefit.
+- **Angles that overlap** — they all return the same Wirecutter summary.
 - **Citing brand pages or affiliate reviews as primary evidence**.
 - **Treating "PFOA-free" or "BPA-free" as a clean bill of health** instead of asking what replaced it.
 - **Ignoring the user's region** when pricing/availability matters (Canadian buyer, US prices = useless).
@@ -174,4 +171,4 @@ Match the format to the user's surface:
 
 ## Why this works
 
-Products are bought on first impressions; they're lived with for years. The research workflow most people use (search "best X" → read top result) optimizes for the first impression and ignores the years. This skill inverts that. The fan-out into parallel teammates is what makes the depth tractable — without it, the lead either does shallow research or burns hours and tokens going deep alone. With it, you get four independent expert lenses on the question in roughly the time of one, and the synthesis is genuinely informed rather than parroted.
+Products are bought on first impressions; they're lived with for years. The research workflow most people use (search "best X" → read top result) optimizes for the first impression and ignores the years. This skill inverts that. The fan-out into separate angles is what makes the depth tractable — without it, the lead either does shallow research or burns hours and tokens going deep alone. With it, you get four independent expert lenses on the question in roughly the time of one, and the synthesis is genuinely informed rather than parroted.

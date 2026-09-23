@@ -181,15 +181,13 @@ Skip entirely if you'd rather rely on Obsidian Sync / calendar reminders alone �
    | [[YYYY-MM-DD]] | journal | evergreen | <summary from frontmatter> |
    ```
 
-2. Open the note in Obsidian (per vault `${user_config.wikiRoot}/CLAUDE.md` "Open in Obsidian" rule — this is a substantive new note, not a bookkeeping edit):
+2. If the agent runs on the same machine as Obsidian, open the note (it is a substantive new note):
 
    ```bash
-   open "obsidian://open?vault=<YOUR_OBSIDIAN_VAULT_NAME>&file=<URL-encode `${user_config.standupNotesBase}/YYYY-MM-DD.md` paths using %2F for slashes>"
+   open "obsidian://open?vault=${user_config.obsidianVaultName}&file=<URL-encoded ${user_config.standupNotesBase}/YYYY-MM-DD.md>"
    ```
 
-   Adjust `vault=` to match Obsidian's **exact** vault identifier and build `file=` as the vault-relative URL-encoded path to the standup note (derive from `${user_config.standupNotesBase}`).
-
-   Skip this in headless / CI mode if `open` is unavailable — surface the filesystem path instead.
+   Otherwise, including headless runs and remote agents, give the note's vault-relative path instead.
 
 ---
 
