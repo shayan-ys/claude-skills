@@ -40,13 +40,13 @@ MyVault/
 ├── 03-Resources/      ← ${RESOURCES_BASE}
 ├── 05-Journal/        ← ${JOURNAL_BASE}  (optional)
 ├── 06-Maps-of-Content/ ← ${MOC_BASE}    (optional)
-└── CLAUDE.md          ← vault schema / conventions doc
+└── AGENTS.md          ← vault schema / conventions doc (CLAUDE.md also works)
 ```
 
 Each folder has an `_index.md` that the skills read and maintain.
 
 If your vault doesn't match this layout, the skills can still work but you'll get more value rewriting them than configuring them.
 
-## Cmux dependency (optional)
+## Parallel subagents (optional)
 
-`wiki-process` and `wiki-lint` optionally mention launching parallel teammate panes via [cmux](https://github.com/get-cmux/cmux) (a multi-pane terminal multiplexer). It's optional — serial execution works fine.
+`wiki-process`, `wiki-lint`, and `wiki-curate` use parallel subagents when the agent harness supports them. Serial execution works fine.

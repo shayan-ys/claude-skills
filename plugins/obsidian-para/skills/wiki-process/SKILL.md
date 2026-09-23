@@ -22,9 +22,9 @@ If `$ARGUMENTS` is empty or ambiguous:
 
 1. List `${user_config.inboxBase}/` and `${user_config.inboxBase}/Clippings/` (excluding `Prompts/` and `Archive/`) and identify the most recently modified file. Read its `title` from frontmatter if present, otherwise fall back to the filename (without `.md`).
 2. Also count the total number of inbox items (across `${user_config.inboxBase}/` and `Clippings/`, excluding `Prompts/` and `Archive/`).
-3. Ask the user via `AskUserQuestion`, embedding the latest title and total count so the user knows exactly what's queued. For example:
+3. Ask the user, embedding the latest title and total count so the user knows exactly what's queued. For example:
 
-> "Latest inbox item: **\<Title of latest note\>**. There are N items total. Process just the latest, or all of them? (If all, I'll spin up teammates to work in parallel.)"
+> "Latest inbox item: **\<Title of latest note\>**. There are N items total. Process just the latest, or all of them? (If all, I'll work in parallel where the harness supports subagents.)"
 
 If the inbox is empty, say so and stop — don't ask the question.
 
@@ -32,7 +32,7 @@ If the inbox is empty, say so and stop — don't ask the question.
 
 ## Step 1 — Load Context
 
-1. Read `${user_config.wikiRoot}/CLAUDE.md` — the authoritative vault schema. All frontmatter, structure, and formatting decisions come from here.
+1. Read `${user_config.wikiRoot}/AGENTS.md` (or `CLAUDE.md` if the vault uses that name) — the authoritative vault schema. All frontmatter, structure, and formatting decisions come from here.
 2. Read all top-level `_index.md` files to understand what already exists in each area:
    - `${user_config.areasBase}/_index.md`, `${user_config.projectsBase}/_index.md`, `${user_config.resourcesBase}/_index.md`, `${user_config.mocBase}/_index.md`
 3. Run `obsidian vault="${user_config.obsidianVaultName}" tags counts` to get the current tag inventory.
@@ -40,50 +40,21 @@ If the inbox is empty, say so and stop — don't ask the question.
 
 ---
 
-## Step 1.5 — Check Open Prompts (Mandatory)
+## Step 1.5 — Check Open Prompts
 
-`${user_config.inboxBase}/Prompts/` is a queue of standing requests for Claude (see `${user_config.wikiRoot}/CLAUDE.md` → "Prompts Folder"). **Before filing any inbox items, scan this folder.**
+`${user_config.inboxBase}/Prompts/` is an optional queue of standing requests for the agent, kept apart from knowledge captures. If the folder does not exist, skip this step silently.
 
-1. List `${user_config.inboxBase}/Prompts/*.md` (ignore the `Archive/` subfolder).
-2. **If there are zero open prompts, skip this step silently.** Do not ask the user about it.
-3. If there are one or more, read each prompt file (they're short, free-form prose) and build a one-line summary per prompt.
-4. Use `AskUserQuestion` to ask **one** question with exactly two options:
+**Prompt file contract:** one free-form file per prompt. Use the vault's `Prompt.md` template if it has one. At capture time set `created:` and optionally `priority:` (`high`, `medium`, or `low`); fill the rest of the frontmatter only when the prompt is processed.
 
-   ```
-   Question: "You have N open prompt(s):
-     - <Prompt Title 1> — <one-line gist>
-     - <Prompt Title 2> — <one-line gist>
-   Tackle them before processing the inbox?"
-   header: "Open prompts"
-   options:
-     - label: "Yes, tackle prompts first"
-       description: "Address open prompts, then ask whether to continue to inbox processing."
-     - label: "No, skip to inbox"
-       description: "Leave prompts for later; proceed to Step 2."
-   ```
-
-5. **If "No"** → proceed to Step 2.
-6. **If "Yes"** → use a second `AskUserQuestion` to pick which prompt(s) to address and how:
-   - For 1–4 prompts, list each as an option with `multiSelect: true`, plus a final option "All of them — run in parallel teammates"
-   - For >4 prompts, chunk them (first 3 shown, "see more" handled by user typing Other)
-   - Include an option "Run selected in parallel teammates" if multiple are selected and they're independent
-7. Address each chosen prompt:
-   - Follow the prompt's intent. If it says "research X" → use the `research` flow. "Brainstorm Y" → use `idea` flow. Creates output notes in the right PARA folder per the normal conventions in `${user_config.wikiRoot}/CLAUDE.md`.
-   - If you have a multi-pane terminal multiplexer like [cmux](https://github.com/get-cmux/cmux), use cmux teammates for parallel prompts (per project `CLAUDE.md` — `TeamCreate` + `Agent` with `team_name`, never `run_in_background`); otherwise run serially. Prefer sonnet teammates for grunt work.
-8. Once each prompt is addressed, **delete the prompt file** from `${user_config.inboxBase}/Prompts/`. No archive — Obsidian Sync preserves version history. Make sure the output note(s) produced from the prompt are properly filed in PARA and linked before deletion.
-9. After all chosen prompts are addressed, use `AskUserQuestion` again:
-
-   ```
-   Question: "Prompt(s) handled. Continue to inbox processing now?"
-   header: "Continue?"
-   options:
-     - label: "Continue to inbox"
-       description: "Proceed to Step 2 and process remaining inbox items."
-     - label: "Stop here"
-       description: "Stop. Inbox items stay untouched for a future session."
-   ```
-
-10. If "Stop" → exit cleanly with a summary of what was addressed. If "Continue" → proceed to Step 1.6.
+1. List `${user_config.inboxBase}/Prompts/*.md` (ignore any `Archive/` subfolder). If there are none, skip this step without asking.
+2. Read each prompt and write a one-line summary per prompt.
+3. Ask the user one question: "You have N open prompt(s): <title — gist>, ... Tackle them before processing the inbox?" with two answers: tackle prompts first, or skip to the inbox.
+4. If the user skips, go to Step 1.6.
+5. Otherwise ask which prompts to address. Offer to run independent prompts in parallel if your harness supports subagents.
+6. Address each chosen prompt by its intent. Research and brainstorm requests follow the `wiki-curate` skill; everything else follows the vault conventions in `${user_config.wikiRoot}/AGENTS.md`.
+7. When a prompt is addressed, file and link its output notes, then delete the prompt file. Obsidian Sync or File Recovery keeps version history, so no archive is needed.
+8. When a prompt is abandoned, delete it. If the decision is worth remembering, record it in the relevant project or area note first.
+9. Ask whether to continue to inbox processing. If the user stops, summarize what was addressed and exit; otherwise go to Step 1.6.
 
 ---
 
@@ -91,10 +62,10 @@ If the inbox is empty, say so and stop — don't ask the question.
 
 **Opt-in**: This step is only relevant if you have a capture pipeline that drops timestamped voice-memo transcripts into `${user_config.inboxBase}/Work-Diary/`. If you don't use this pattern, skip Step 1.6 entirely and proceed to Step 2.
 
-`${user_config.inboxBase}/Work-Diary/` is a separate stream: voice-memo transcripts dropped by an iOS Shortcut (or similar capture mechanism) into this folder. They have a totally different shape from generic inbox captures (timestamped `## HH:MM` blocks, minimal frontmatter, one file per day) and a fixed destination (`${user_config.wikiRoot}/${user_config.workDiaryBase}/`), so they get their own pass before the generic Step 2 sweep. Keep a consistent contract for filenames and timestamps in your vault's conventions doc (`${user_config.wikiRoot}/CLAUDE.md`) if you use this pipeline.
+`${user_config.inboxBase}/Work-Diary/` is a separate stream: voice-memo transcripts dropped by an iOS Shortcut (or similar capture mechanism) into this folder. They have a totally different shape from generic inbox captures (timestamped `## HH:MM` blocks, minimal frontmatter, one file per day) and a fixed destination (`${user_config.wikiRoot}/${user_config.workDiaryBase}/`), so they get their own pass before the generic Step 2 sweep. Keep a consistent contract for filenames and timestamps in your vault's conventions doc (`${user_config.wikiRoot}/AGENTS.md`) if you use this pipeline.
 
 1. List `${user_config.inboxBase}/Work-Diary/*.md` (oldest first by mtime). If empty, skip this step silently.
-2. If one or more entries exist, use `AskUserQuestion`:
+2. If one or more entries exist, ask the user:
    ```
    Question: "N work-diary entr(y/ies) waiting: <filename1>, <filename2>, ... Process now?"
    header: "Work diary"
@@ -148,26 +119,21 @@ If the inbox is empty, say so and stop — don't ask the question.
 
 5. After all work-diary entries are processed, proceed to Step 2 for any remaining generic inbox items.
 
-**Why this is its own step and not part of Step 2's teammate sweep:** the work-diary pipeline is deterministic and short (4-8 tool calls per file), so spawning a teammate per entry is overkill and the cross-entry context (same project mentions appearing across the week) is worth keeping in one place. The generic Step 2 path is for heterogeneous captures that benefit from parallelization.
+**Why this is its own step and not part of Step 2's parallel sweep:** the work-diary pipeline is deterministic and short (4-8 tool calls per file), so spawning a subagent per entry is overkill and the cross-entry context (same project mentions appearing across the week) is worth keeping in one place. The generic Step 2 path is for heterogeneous captures that benefit from parallelization.
 
 ---
 
-## Step 2 — Spawn Teammates (All Mode)
+## Step 2 — Parallelize (All Mode)
 
-If processing multiple items, parallelize with your multiplexer (e.g. cmux teammates) if available; otherwise run serially. Create one team when using a multiplexer, then spawn one teammate per inbox item (or batch if there are many — max 4 teammates).
+If processing multiple items and your harness supports subagents, spawn one per inbox item (batch them if there are many; use at most 4). Otherwise run serially.
 
-```
-Team: "inbox-process"
-Teammates: one per inbox item (or batched if >4 items)
-```
-
-Each teammate gets:
-- The full vault schema (from ${user_config.wikiRoot}/CLAUDE.md — include the frontmatter schema, heading contracts, wikilink conventions, mobile formatting rules, and tag namespaces)
+Each subagent gets:
+- The full vault schema (from `${user_config.wikiRoot}/AGENTS.md` — include the frontmatter schema, heading contracts, wikilink conventions, mobile formatting rules, and tag namespaces)
 - The current tag inventory
 - The list of existing notes from all `_index.md` files (so it can find related notes and avoid duplicates)
 - Its assigned inbox file(s) to process
 
-If processing a single item (latest mode), skip teammates and do it directly.
+If processing a single item (latest mode), skip subagents and do it directly.
 
 ---
 
@@ -222,14 +188,14 @@ aliases: ["<alternate names people might search for>"]
 ---
 ```
 
-Tag selection rules (from ${user_config.wikiRoot}/CLAUDE.md):
+Tag selection rules (from `${user_config.wikiRoot}/AGENTS.md`):
 - Use established namespaces: `finance/`, `tech/`, `health/`, `career/`, `philosophy/`, `home/`, `meta/`
 - Prefer reusing existing tags from the inventory over inventing new ones
 - Max 5 tags per note
 
 ### 3d. Structure the Content
 
-Based on the note's `type`, apply the heading structure contract from ${user_config.wikiRoot}/CLAUDE.md:
+Based on the note's `type`, apply the heading structure contract from `${user_config.wikiRoot}/AGENTS.md`:
 
 | Type | Expected H2 sections |
 |---|---|
@@ -258,7 +224,7 @@ For web clippings being converted to `article` type:
 
 ### 3f. Apply Mobile Formatting
 
-Per ${user_config.wikiRoot}/CLAUDE.md:
+Per `${user_config.wikiRoot}/AGENTS.md`:
 - No hard line wrapping
 - Short paragraphs (max 4-5 sentences)
 - Max 2-3 callouts per note
@@ -302,10 +268,6 @@ After all items are processed, present a summary:
 
 ---
 
-## Step 6 — Shutdown
+## Step 6 — Wrap Up
 
-If teammates were used:
-1. Wait for all teammates to report completion via `SendMessage`
-2. Send shutdown requests to all teammates
-3. Delete the team
-4. Aggregate individual reports into the final summary above
+If subagents were used, wait for each to report, close them, and merge their reports into the summary above.

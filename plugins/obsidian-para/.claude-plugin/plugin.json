@@ -1,7 +1,7 @@
 {
   "name": "obsidian-para",
-  "version": "0.1.0",
-  "description": "Three skills for maintaining an Obsidian vault organized by PARA: wiki-lint, wiki-process, standup-notes. See config.example.md for the placeholders you need to fill in.",
+  "version": "0.2.0",
+  "description": "Four skills for maintaining an Obsidian vault organized by PARA: wiki-process, wiki-curate, wiki-lint, standup-notes. See config.example.md for the placeholders you need to fill in.",
   "author": {
     "name": "Shayan Ys",
     "url": "https://github.com/shayan-ys"

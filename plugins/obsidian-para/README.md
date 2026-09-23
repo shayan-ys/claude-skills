@@ -1,9 +1,10 @@
 # obsidian-para
 
-A Claude Code plugin bundling three skills for maintaining an [Obsidian](https://obsidian.md) vault organized by [PARA](https://fortelabs.com/blog/para/):
+A Claude Code plugin bundling four skills for maintaining an [Obsidian](https://obsidian.md) vault organized by [PARA](https://fortelabs.com/blog/para/):
 
 - **wiki-lint** — vault-wide health check (broken frontmatter, orphan notes, stale archives, missing lead paragraphs, weak backlinks)
 - **wiki-process** — triage and file `00-Inbox/` captures into PARA folders with proper frontmatter, wikilinks, and index updates
+- **wiki-curate** — research a topic into the vault, brainstorm ideas, and tidy existing notes without losing the author's voice
 - **standup-notes** — synthesize daily work-diary entries into a structured standup prep note
 
 Looking for trip planning? See [`travel-research@shayan-ys`](../travel-research) — it's its own plugin now.
@@ -22,6 +23,7 @@ Anthropic's [skill authoring best practices](https://docs.anthropic.com/en/docs/
 
 - Vault organized by PARA (`01-Areas/`, `02-Projects/`, `03-Resources/`, etc.)
 - Each folder maintains an `_index.md`
+- The vault root has an `AGENTS.md` (or `CLAUDE.md`) conventions file; the skills defer to it
 - You're working on macOS or Linux
 
 ## License

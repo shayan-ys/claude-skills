@@ -26,7 +26,7 @@
     {
       "name": "obsidian-para",
       "source": "./plugins/obsidian-para",
-      "description": "Three skills for maintaining an Obsidian vault organized by PARA: wiki-lint, wiki-process, standup-notes."
+      "description": "Four skills for maintaining an Obsidian vault organized by PARA: wiki-process, wiki-curate, wiki-lint, standup-notes."
     },
     {
       "name": "car-invoice",
